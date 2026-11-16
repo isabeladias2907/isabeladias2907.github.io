@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agente de Documentos Jurídicos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap" />
+<style>
+  /* Identidade Isabela Dias: petróleo + papel claro. Layout: entrada à esquerda, trabalho do agente à direita em 4 etapas. */
+  :root{
+    --brand:#0f4c5c; --brand-dark:#0a3540; --brand-soft:#e7eff1; --line:#dfe6e8; --ink:#16191d; --muted:#5b636b; --faint:#8a929a;
+    --bg:#f4f7f8; --card:#ffffff; --paper:#fffdf9;
+    --ok:#2f7a52; --ok-bg:#eaf5ef; --warn:#93620d; --warn-bg:#fbf3e2; --bad:#a33a3a; --bad-bg:#fbefef;
+    --display:'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --body:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg); color:var(--ink); font-family:var(--body); font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased}
+  button,input,select{font:inherit}
+  h1,h2,h3{text-wrap:balance}
+  :focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+
+  .top{background:var(--brand); color:#e9f1f3}
+  .top .in{max-width:1240px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap}
+  .id{display:flex; align-items:center; gap:12px}
+  .mono{width:36px; height:36px; border:1px solid rgba(255,255,255,.35); border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:600; color:#fff}
+  .id b{display:block; color:#fff; font-family:var(--display); font-weight:600; font-size:18px; line-height:1.15}
+  .id small{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#a9c4cb}
+  .flags{display:flex; gap:8px; flex-wrap:wrap}
+  .flag{font-size:11px; font-weight:600; letter-spacing:.06em; border-radius:999px; padding:4px 10px; border:1px solid rgba(255,255,255,.3); color:#fff}
+  .flag.dev{background:#f2c94c; color:#3a2a00; border-color:#f2c94c}
+
+  .wrap{max-width:1240px; margin:0 auto; padding:24px 24px 56px; display:flex; flex-direction:column; gap:20px}
+  .intro{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:20px; align-items:end}
+  .intro h1{margin:0 0 6px; font-family:var(--display); font-weight:600; font-size:30px; line-height:1.15}
+  .intro p{margin:0; color:var(--muted); max-width:70ch}
+  .note{font-size:12px; color:var(--muted); background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 14px; max-width:360px}
+  .note b{color:var(--ink)}
+
+  .grid{display:grid; grid-template-columns:360px minmax(0,1fr); gap:20px; align-items:start}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px}
+  .side{padding:18px; display:flex; flex-direction:column; gap:14px; position:sticky; top:16px}
+  .eyebrow{font-size:10.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--brand)}
+  .cases{display:flex; flex-direction:column; gap:8px}
+  .case{display:flex; flex-direction:column; gap:3px; text-align:left; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:11px 13px; cursor:pointer}
+  .case:hover{border-color:#b9cdd2}
+  .case[aria-pressed="true"]{border-color:var(--brand); box-shadow:inset 3px 0 0 var(--brand); background:#fbfdfd}
+  .case b{font-size:13.5px}
+  .case span{font-size:12px; color:var(--muted)}
+  .docs{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px}
+  .doc{display:flex; align-items:center; gap:10px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; cursor:pointer; background:var(--card); width:100%; text-align:left}
+  .doc:hover{border-color:#b9cdd2}
+  .doc .ext{flex:none; min-width:36px; text-align:center; padding:2px 5px; border-radius:5px; background:var(--brand-soft); color:var(--brand); font-size:10px; font-weight:700; text-transform:uppercase}
+  .doc .nm{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .doc.missing{border-style:dashed; color:var(--faint); cursor:default}
+  .doc.missing .ext{background:#f1f3f4; color:var(--faint)}
+  .run{background:var(--brand); color:#fff; border:0; border-radius:10px; padding:12px; font-weight:600; cursor:pointer}
+  .run:hover{background:var(--brand-dark)}
+  .run:disabled{opacity:.6; cursor:wait}
+  .privacy{font-size:11.5px; color:var(--muted); border-top:1px solid var(--line); padding-top:12px}
+
+  .main{overflow:hidden}
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--line); background:#fafcfc}
+  .step{display:flex; align-items:center; gap:8px; justify-content:center; background:none; border:0; border-bottom:2px solid transparent; padding:13px 8px 11px; font-size:13px; font-weight:500; color:var(--muted); cursor:pointer}
+  .step i{font-style:normal; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; background:#eef2f3; color:var(--muted)}
+  .step.done i{background:var(--ok); color:#fff}
+  .step.on{color:var(--brand); border-bottom-color:var(--brand); font-weight:600; background:var(--card)}
+  .step.on i{background:var(--brand); color:#fff}
+  .panel{padding:22px 24px 26px}
+  .panel h2{margin:0 0 4px; font-family:var(--display); font-weight:600; font-size:21px}
+  .panel .lead{margin:0 0 16px; color:var(--muted); max-width:72ch}
+
+  .log{list-style:none; margin:0; padding:14px 16px; background:#0f1d22; color:#cfe0e4; border-radius:10px; font:12.5px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; min-height:120px}
+  .log li{display:flex; gap:10px}
+  .log .t{color:#6f8f97; flex:none}
+  .log .okk{color:#7fd3a4}
+  .log .wrn{color:#f2c94c}
+
+  table{width:100%; border-collapse:collapse; font-size:13px}
+  th{text-align:left; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--brand); padding:9px 12px; background:#fafcfc; border-bottom:1px solid var(--line)}
+  td{padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  .tbl{border:1px solid var(--line); border-radius:10px; overflow-x:auto}
+  .num{font-variant-numeric:tabular-nums; white-space:nowrap}
+  .src{font-size:11.5px; color:var(--faint)}
+  .conf{display:inline-block; min-width:44px; text-align:center; font-size:11px; font-weight:600; border-radius:999px; padding:1px 8px; background:var(--ok-bg); color:var(--ok)}
+  .conf.mid{background:var(--warn-bg); color:var(--warn)}
+  .masked{font-variant-numeric:tabular-nums; letter-spacing:.02em}
+
+  .checks{display:flex; flex-direction:column; gap:8px}
+  .chk{display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; padding:12px 14px; border-radius:10px; border:1px solid var(--line); border-left-width:4px}
+  .chk .ic{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff}
+  .chk.ok{border-left-color:var(--ok)} .chk.ok .ic{background:var(--ok)}
+  .chk.warn{border-left-color:#d79a1f; background:#fffcf5} .chk.warn .ic{background:#d79a1f}
+  .chk.bad{border-left-color:var(--bad); background:#fffafa} .chk.bad .ic{background:var(--bad)}
+  .chk b{display:block; font-size:13.5px}
+  .chk p{margin:2px 0 0; color:var(--muted); font-size:12.5px}
+  .chk .law{font-size:11.5px; color:var(--brand); margin-top:4px}
+  .summary{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px}
+  .pill{font-size:11.5px; font-weight:600; border-radius:999px; padding:3px 10px}
+  .pill.ok{background:var(--ok-bg); color:var(--ok)} .pill.warn{background:var(--warn-bg); color:var(--warn)} .pill.bad{background:var(--bad-bg); color:var(--bad)}
+
+  .opts{display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:#fafcfc; margin-bottom:14px; font-size:13px}
+  .opts label{display:flex; align-items:center; gap:8px}
+  .opts input[type=number]{width:120px; border:1px solid #c9d6da; border-radius:8px; padding:6px 9px; font-variant-numeric:tabular-nums}
+  .opts .sp{flex:1}
+  .btn{border:1px solid #c9d6da; background:var(--card); color:var(--brand); border-radius:8px; padding:7px 12px; font-weight:500; cursor:pointer}
+  .btn:hover{border-color:var(--brand); background:var(--brand-soft)}
+  .review{display:flex; gap:10px; align-items:flex-start; padding:10px 14px; border-radius:10px; background:var(--warn-bg); color:#5e4208; font-size:12.5px; margin-bottom:14px}
+
+  .paper{background:var(--paper); border:1px solid #e9e4d8; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 30px rgba(16,24,32,.06); padding:48px 56px; font-family:var(--display); font-size:15px; line-height:1.7; color:#1d1d1b; max-width:820px; margin:0 auto}
+  .paper h3{font-family:var(--display); font-size:15px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; margin:26px 0 8px}
+  .paper p{margin:0 0 12px; text-align:justify; hyphens:auto}
+  .paper .addr{font-weight:600; text-transform:uppercase; margin-bottom:36px; text-align:left}
+  .paper .title{text-align:center; font-weight:600; text-transform:uppercase; margin:18px 0}
+  .paper ol{margin:0 0 12px; padding-left:22px}
+  .paper li{margin-bottom:6px; text-align:justify}
+  .paper .sign{margin-top:36px; text-align:center}
+  .paper .addr,.paper .title{hyphens:manual}
+  .f{background:#e7f1ee; border-bottom:1px dotted var(--brand); padding:0 2px; border-radius:2px}
+  .f.miss{background:#fbefef; border-bottom-color:var(--bad); color:var(--bad)}
+
+  .inside{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px}
+  .box{padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--card)}
+  .box .k{font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--brand)}
+  .box b{display:block; margin:4px 0 4px; font-size:14px}
+  .box p{margin:0; font-size:12.5px; color:var(--muted)}
+
+  .modal-bg{position:fixed; inset:0; background:rgba(16,24,32,.45); display:flex; align-items:center; justify-content:center; padding:16px; z-index:10}
+  .modal{background:var(--paper); border-radius:10px; max-width:640px; width:100%; max-height:80vh; overflow:auto; padding:28px 32px; box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .modal .bar{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px}
+  .modal pre{white-space:pre-wrap; font:13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin:0; color:#2b2b28}
+  .hidden{display:none !important}
+  .toast{position:fixed; right:18px; bottom:18px; background:var(--ink); color:#fff; padding:11px 14px; border-radius:10px; font-size:13px; z-index:11}
+
+  footer{font-size:11.5px; color:var(--faint); text-align:center; padding:0 24px 28px}
+
+  @media (max-width:980px){ .grid{grid-template-columns:1fr} .side{position:static} .inside{grid-template-columns:1fr 1fr} .intro{grid-template-columns:1fr} }
+  @media (max-width:560px){ .wrap{padding:16px 16px 40px} .paper{padding:28px 20px} .steps .step span{display:none} .inside{grid-template-columns:1fr} .panel{padding:18px 16px} }
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="in">
+    <div class="id"><div class="mono">ID</div><div><b>Agente de Documentos Jurídicos</b><small>Portfólio · Isabela Dias</small></div></div>
+    <div class="flags"><a class="flag" href="../" style="text-decoration:none">← Portfólio</a><span class="flag dev">Em desenvolvimento</span><span class="flag">Demonstração com dados fictícios</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <h1>Do documento solto à minuta pronta para revisão</h1>
+      <p>O agente lê os documentos do caso, extrai partes, valores e datas, confere o que falta e os riscos jurídicos, e monta a petição inicial. A advogada revisa e decide. Escolha um caso fictício e rode o agente.</p>
+    </div>
+    <div class="note"><b>Tudo aqui é fictício.</b> Pessoas, empresas, documentos e números foram inventados. Esta página não chama nenhuma IA nem envia dados: as etapas reproduzem o comportamento do agente.</div>
+  </section>
+
+  <section class="grid">
+    <aside class="card side">
+      <div class="eyebrow">1 · Escolha o caso</div>
+      <div class="cases" id="cases"></div>
+      <div class="eyebrow">Documentos recebidos</div>
+      <ul class="docs" id="docs"></ul>
+      <button class="run" id="run" onclick="runAgent()">Rodar o agente</button>
+      <div class="privacy">Proteção de dados desde a concepção: CPF e outros identificadores aparecem mascarados nos registros, documentos não saem do ambiente do escritório e a minuta só é liberada com revisão humana.</div>
+    </aside>
+
+    <section class="card main">
+      <nav class="steps" id="steps">
+        <button class="step" data-s="0" onclick="show(0)"><i>1</i><span>Leitura</span></button>
+        <button class="step" data-s="1" onclick="show(1)"><i>2</i><span>Dados extraídos</span></button>
+        <button class="step" data-s="2" onclick="show(2)"><i>3</i><span>Checagem</span></button>
+        <button class="step" data-s="3" onclick="show(3)"><i>4</i><span>Minuta</span></button>
+      </nav>
+      <div class="panel" id="panel"></div>
+    </section>
+  </section>
+
+  <section>
+    <div class="eyebrow" style="margin-bottom:10px">Como funciona por dentro</div>
+    <div class="inside">
+      <div class="box"><div class="k">Leitura</div><b>Documentos viram texto</b><p>PDFs, prints e e-mails são convertidos em texto, página a página, com a origem de cada trecho guardada.</p></div>
+      <div class="box"><div class="k">Extração</div><b>IA preenche um formulário fixo</b><p>O modelo de IA devolve os dados num formato estruturado, com o trecho de origem e o grau de confiança de cada campo.</p></div>
+      <div class="box"><div class="k">Checagem</div><b>Regras jurídicas explícitas</b><p>Documentos obrigatórios, teto do Juizado, cabimento da repetição em dobro e da indenização são conferidos por regras, não por palpite.</p></div>
+      <div class="box"><div class="k">Minuta</div><b>Modelo com campos + revisão</b><p>A peça sai de um modelo próprio, só com dados verificados. Campo faltante aparece marcado em vermelho para a revisão.</p></div>
+    </div>
+  </section>
+</main>
+<footer>Demonstração de portfólio · Isabela Dias · Advogada (UFBA) · Automação e Sistemas Jurídicos</footer>
+
+<div id="modal" class="modal-bg hidden" onclick="if(event.target===this) closeDoc()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="doc-title">
+    <div class="bar"><b id="doc-title"></b><button class="btn" onclick="closeDoc()">Fechar</button></div>
+    <pre id="doc-body"></pre>
+  </div>
+</div>
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+/* ===================== Casos fictícios ===================== */
+const CASES = [
+  {
+    id: "internet",
+    label: "Serviço de internet não contratado",
+    hint: "Cobranças pagas, sem negativação",
+    autor: { nome: "Ana Beatriz Rocha", nac: "brasileira", civil: "solteira", prof: "professora", cpf: "000.111.222-33", end: "Rua das Acácias, 120, Pituba, Salvador/BA", cep: "41810-000" },
+    re: { nome: "NetVia Telecomunicações S.A.", cnpj: "00.000.000/0001-00", end: "Av. Paulista, 1000, São Paulo/SP" },
+    docs: [
+      { n: "rg-cpf-ana.pdf", t: "Documento de identidade", body: "REPÚBLICA FEDERATIVA DO BRASIL (documento fictício)\nNome: ANA BEATRIZ ROCHA\nCPF: 000.111.222-33\nData de nascimento: 14/03/1990" },
+      { n: "faturas-jan-abr-2026.pdf", t: "Faturas da NetVia (4)", body: "NETVIA TELECOMUNICAÇÕES S.A. (empresa fictícia)\nCliente: Ana Beatriz Rocha · Contrato 55.000.123\n\nPlano Fibra 300 Mega ........ R$ 99,90\nPacote Streaming+ ........... R$ 39,90   ← não contratado\n\nCompetências: jan, fev, mar e abr/2026\nTodas as faturas constam como PAGAS." },
+      { n: "protocolo-sac.png", t: "Print do atendimento", body: "Protocolo 2026.0412.7781 · 12/04/2026\nCliente: \"Não contratei o Pacote Streaming+, peço o cancelamento e o estorno.\"\nAtendente: \"Solicitação registrada. Prazo de análise: 5 dias úteis.\"\n\nProtocolo 2026.0503.1102 · 03/05/2026\nCliente: \"Continuo sendo cobrada.\"\nStatus: sem resposta." }
+    ],
+    missing: ["comprovante de residência"],
+    cobrancas: 4, valor: 39.90, pago: true, negativado: false, negValor: 0,
+    periodo: "janeiro a abril de 2026", servico: "\"Pacote Streaming+\"",
+    protocolos: "2026.0412.7781 e 2026.0503.1102",
+    moralDefault: false, moralValor: 3000
+  },
+  {
+    id: "cartao",
+    label: "Anuidade de cartão já cancelado",
+    hint: "Valores não pagos, nome negativado",
+    autor: { nome: "Carlos Eduardo Mendes", nac: "brasileiro", civil: "casado", prof: "contador", cpf: "000.333.444-55", end: "Rua Boa Vista, 45, Brotas, Salvador/BA", cep: "40285-000" },
+    re: { nome: "Banco Aurora S.A.", cnpj: "00.000.000/0002-00", end: "Rua XV de Novembro, 300, Curitiba/PR" },
+    docs: [
+      { n: "rg-cpf-carlos.pdf", t: "Documento de identidade", body: "REPÚBLICA FEDERATIVA DO BRASIL (documento fictício)\nNome: CARLOS EDUARDO MENDES\nCPF: 000.333.444-55" },
+      { n: "comprovante-residencia.pdf", t: "Conta de energia", body: "Conta de energia (fictícia) · Titular: Carlos Eduardo Mendes\nEndereço: Rua Boa Vista, 45, Brotas, Salvador/BA · CEP 40285-000" },
+      { n: "confirmacao-cancelamento.pdf", t: "E-mail do banco", body: "Banco Aurora (fictício) · 08/10/2025\n\"Confirmamos o cancelamento do cartão final 4417. Nenhuma nova cobrança será gerada.\"" },
+      { n: "faturas-nov-jan.pdf", t: "Faturas pós-cancelamento", body: "Anuidade — parcela 1/3 ..... R$ 45,00 (nov/2025)\nAnuidade — parcela 2/3 ..... R$ 45,00 (dez/2025)\nAnuidade — parcela 3/3 ..... R$ 45,00 (jan/2026)\nSituação: EM ABERTO (não pagas)" },
+      { n: "extrato-spc.pdf", t: "Consulta ao cadastro de crédito", body: "Consulta (fictícia) · 20/02/2026\nAnotação: Banco Aurora S.A. · R$ 182,40 · inclusão em 05/02/2026\nOutras anotações: nenhuma." }
+    ],
+    missing: [],
+    cobrancas: 3, valor: 45.00, pago: false, negativado: true, negValor: 182.40,
+    periodo: "novembro de 2025 a janeiro de 2026", servico: "anuidade do cartão de crédito final 4417",
+    protocolos: "confirmação de cancelamento enviada pelo próprio banco em 08/10/2025",
+    moralDefault: true, moralValor: 8000
+  }
+];
+
+/* ===================== Estado ===================== */
+let cur = CASES[0];
+let ran = false, step = 0, moral = cur.moralDefault, moralValor = cur.moralValor;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const brl = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const maskCPF = c => c.replace(/^(\d{3})\.\d{3}\.(\d{3})-\d{2}$/, "$1.***.$2-**");
+const total = () => +(cur.cobrancas * cur.valor).toFixed(2);
+const dobro = () => +(total() * 2).toFixed(2);
+
+/* ===================== Entrada ===================== */
+function renderCases() {
+  $("cases").innerHTML = CASES.map(c => `<button class="case" aria-pressed="${c.id === cur.id}" onclick="pick('${c.id}')"><b>${esc(c.label)}</b><span>${esc(c.hint)}</span></button>`).join("");
+  $("docs").innerHTML = cur.docs.map((d, i) => `<li><button class="doc" onclick="openDoc(${i})" title="Ver documento"><span class="ext">${esc(d.n.split(".").pop())}</span><span class="nm">${esc(d.n)}</span></button></li>`).join("")
+    + cur.missing.map(m => `<li><div class="doc missing"><span class="ext">—</span><span class="nm">Falta: ${esc(m)}</span></div></li>`).join("");
+}
+function pick(id) {
+  cur = CASES.find(c => c.id === id);
+  ran = false; step = 0; moral = cur.moralDefault; moralValor = cur.moralValor;
+  renderCases(); renderSteps(); render();
+}
+function openDoc(i) { $("doc-title").textContent = cur.docs[i].t + " · " + cur.docs[i].n; $("doc-body").textContent = cur.docs[i].body; $("modal").classList.remove("hidden"); }
+function closeDoc() { $("modal").classList.add("hidden"); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDoc(); });
+
+/* ===================== Etapas ===================== */
+function renderSteps() {
+  document.querySelectorAll(".step").forEach(b => {
+    const s = +b.dataset.s;
+    b.classList.toggle("on", s === step);
+    b.classList.toggle("done", ran && s !== step);
+  });
+}
+function show(s) { step = s; renderSteps(); render(); }
+
+function logLines() {
+  const c = cur, n = c.docs.length;
+  const L = [
+    ["00:00", `Recebidos ${n} documentos do caso`, ""],
+    ["00:01", "Convertendo PDFs e imagens em texto", ""],
+    ["00:03", `Partes identificadas: ${c.autor.nome} × ${c.re.nome}`, "okk"],
+    ["00:03", `CPF mascarado nos registros: ${maskCPF(c.autor.cpf)}`, "okk"],
+    ["00:04", `${c.cobrancas} cobranças de ${brl(c.valor)} encontradas (${c.periodo})`, "okk"],
+    ["00:05", c.pago ? "Faturas constam como pagas" : "Faturas constam em aberto: valores não foram pagos", c.pago ? "okk" : "wrn"],
+  ];
+  if (c.negativado) L.push(["00:05", `Negativação localizada: ${brl(c.negValor)}; nenhuma anotação anterior`, "wrn"]);
+  c.missing.forEach(m => L.push(["00:06", `Documento ausente: ${m}`, "wrn"]));
+  L.push(["00:07", "Checagens jurídicas concluídas", "okk"], ["00:08", "Minuta gerada · aguardando revisão humana", "okk"]);
+  return L;
+}
+
+async function runAgent() {
+  const btn = $("run"); btn.disabled = true; btn.textContent = "Agente trabalhando…";
+  ran = false; step = 0; renderSteps();
+  $("panel").innerHTML = `<h2>Leitura dos documentos</h2><p class="lead">Acompanhe o que o agente está fazendo.</p><ol class="log" id="log"></ol>`;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  for (const [t, txt, cls] of logLines()) {
+    $("log").insertAdjacentHTML("beforeend", `<li><span class="t">${t}</span><span class="${cls}">${esc(txt)}</span></li>`);
+    if (!reduce) await new Promise(r => setTimeout(r, 380));
+  }
+  ran = true; btn.disabled = false; btn.textContent = "Rodar de novo";
+  if (!reduce) await new Promise(r => setTimeout(r, 400));
+  show(1);
+}
+
+/* ===================== Painéis ===================== */
+function render() {
+  const P = $("panel");
+  if (!ran) {
+    P.innerHTML = `<h2>Pronto para começar</h2>
+      <p class="lead">Caso selecionado: <b>${esc(cur.label)}</b>. O agente vai ler ${cur.docs.length} documentos, extrair os dados, checar os pontos jurídicos e montar a minuta da inicial para o Juizado Especial Cível.</p>
+      <ol class="log"><li><span class="t">--:--</span><span>Aguardando você clicar em “Rodar o agente”.</span></li></ol>`;
+    return;
+  }
+  [renderLog, renderData, renderChecks, renderDraft][step](P);
+}
+
+function renderLog(P) {
+  P.innerHTML = `<h2>Leitura dos documentos</h2><p class="lead">Registro do que o agente fez, na ordem.</p>
+    <ol class="log">${logLines().map(([t, x, c]) => `<li><span class="t">${t}</span><span class="${c}">${esc(x)}</span></li>`).join("")}</ol>`;
+}
+
+function renderData(P) {
+  const c = cur;
+  const rows = [
+    ["Autor(a)", esc(c.autor.nome), c.docs[0].n, 99],
+    ["CPF", `<span class="masked">${esc(maskCPF(c.autor.cpf))}</span>`, c.docs[0].n, 98],
+    ["Endereço do autor", c.missing.includes("comprovante de residência") ? `<span style="color:var(--bad)">Sem comprovante</span> · informado no cadastro: ${esc(c.autor.end)}` : esc(c.autor.end), c.missing.includes("comprovante de residência") ? "cadastro do cliente" : "comprovante-residencia.pdf", c.missing.includes("comprovante de residência") ? 60 : 97],
+    ["Ré", esc(c.re.nome), c.docs[1].n, 99],
+    ["Objeto da cobrança", esc(c.servico), c.docs[c.id === "cartao" ? 3 : 1].n, 95],
+    ["Cobranças", `${c.cobrancas} × ${brl(c.valor)} = <b>${brl(total())}</b>`, c.docs[c.id === "cartao" ? 3 : 1].n, 97],
+    ["Período", esc(c.periodo), c.docs[c.id === "cartao" ? 3 : 1].n, 96],
+    ["Pagamento", c.pago ? "Pago" : "<b>Não pago</b> (em aberto)", c.docs[c.id === "cartao" ? 3 : 1].n, 94],
+    ["Negativação", c.negativado ? `Sim · ${brl(c.negValor)} · inclusão em 05/02/2026` : "Não há", c.negativado ? "extrato-spc.pdf" : "—", c.negativado ? 96 : 90],
+    ["Tentativa de solução", esc(c.protocolos), c.id === "cartao" ? "confirmacao-cancelamento.pdf" : "protocolo-sac.png", 92],
+  ];
+  P.innerHTML = `<h2>Dados extraídos</h2><p class="lead">Cada campo traz o documento de onde saiu e a confiança da extração. Campos com confiança baixa vão para a revisão.</p>
+    <div class="tbl"><table><thead><tr><th>Campo</th><th>Valor</th><th>Origem</th><th>Confiança</th></tr></thead>
+    <tbody>${rows.map(([k, v, s, p]) => `<tr><td>${k}</td><td>${v}</td><td class="src">${esc(s)}</td><td><span class="conf ${p < 80 ? "mid" : ""}">${p}%</span></td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function checks() {
+  const c = cur, L = [];
+  L.push({ s: "ok", t: "Relação de consumo", d: `${c.autor.nome} é destinatário(a) final do serviço prestado pela ré.`, law: "CDC, arts. 2º e 3º" });
+  L.push({ s: "ok", t: "Cabe no Juizado Especial Cível", d: "Valor da causa dentro do teto de 40 salários mínimos.", law: "Lei 9.099/95, art. 3º, I" });
+  if (c.missing.length) L.push({ s: "bad", t: "Falta documento: comprovante de residência", d: "Necessário para firmar a competência no domicílio do consumidor. Peça ao cliente antes de protocolar.", law: "CDC, art. 101, I" });
+  else L.push({ s: "ok", t: "Documentos essenciais completos", d: "Identidade, comprovante de residência e provas da cobrança presentes.", law: "" });
+  if (c.pago) L.push({ s: "ok", t: "Repetição do indébito em dobro cabível", d: `Valores efetivamente pagos (${brl(total())}). Restituição em dobro: ${brl(dobro())}. O STJ dispensa prova de má-fé quando a cobrança contraria a boa-fé objetiva.`, law: "CDC, art. 42, parágrafo único · STJ, EAREsp 676.608/RS" });
+  else L.push({ s: "warn", t: "Repetição em dobro NÃO se aplica", d: "As cobranças não foram pagas. O dobro depende de pagamento em excesso; o pedido correto é declarar a inexistência do débito.", law: "CDC, art. 42, parágrafo único" });
+  if (c.negativado) {
+    L.push({ s: "ok", t: "Dano moral por negativação indevida", d: "Inscrição indevida em cadastro de crédito gera dano presumido, segundo o STJ.", law: "Jurisprudência do STJ (dano in re ipsa)" });
+    L.push({ s: "ok", t: "Súmula 385 do STJ verificada", d: "Não há anotação anterior legítima no extrato; a indenização não fica afastada.", law: "STJ, Súmula 385" });
+    L.push({ s: "warn", t: "Sugestão: tutela de urgência", d: "Pedir a exclusão imediata do nome do cadastro enquanto o processo corre.", law: "CPC, art. 300" });
+  } else {
+    L.push({ s: "warn", t: "Dano moral é pedido frágil neste caso", d: "Sem negativação ou outro desdobramento, a cobrança indevida costuma ser tratada como mero aborrecimento. Só inclua se houver prova de perda relevante de tempo (vários protocolos sem solução).", law: "Ponto de decisão da advogada" });
+  }
+  L.push({ s: "ok", t: "Inversão do ônus da prova", d: "Hipossuficiência técnica do consumidor frente à empresa.", law: "CDC, art. 6º, VIII" });
+  return L;
+}
+
+function renderChecks(P) {
+  const L = checks();
+  const n = s => L.filter(x => x.s === s).length;
+  P.innerHTML = `<h2>Checagem jurídica</h2><p class="lead">Regras explícitas, cada uma com a base legal. O que está em amarelo ou vermelho precisa da decisão da advogada.</p>
+    <div class="summary"><span class="pill ok">${n("ok")} ok</span>${n("warn") ? `<span class="pill warn">${n("warn")} atenção</span>` : ""}${n("bad") ? `<span class="pill bad">${n("bad")} pendência</span>` : ""}</div>
+    <div class="checks">${L.map(x => `<div class="chk ${x.s}"><span class="ic">${x.s === "ok" ? "✓" : x.s === "warn" ? "!" : "×"}</span><div><b>${esc(x.t)}</b><p>${esc(x.d)}</p>${x.law ? `<div class="law">${esc(x.law)}</div>` : ""}</div></div>`).join("")}</div>`;
+}
+
+/* ===================== Minuta ===================== */
+function F(v, miss) { return `<span class="f ${miss ? "miss" : ""}">${v}</span>`; }
+
+function draftHTML() {
+  const c = cur, a = c.autor, r = c.re;
+  const vCausa = (c.pago ? dobro() : c.negValor) + (moral ? moralValor : 0);
+  const semComprovante = c.missing.includes("comprovante de residência");
+  const nomeAcao = [c.pago ? "AÇÃO DECLARATÓRIA DE INEXISTÊNCIA DE DÉBITO C/C REPETIÇÃO DE INDÉBITO" : "AÇÃO DECLARATÓRIA DE INEXISTÊNCIA DE DÉBITO", moral ? "E INDENIZAÇÃO POR DANOS MORAIS" : "", c.negativado ? "COM PEDIDO DE TUTELA DE URGÊNCIA" : ""].filter(Boolean).join(" ");
+
+  const fatos = c.id === "internet"
+    ? `<p>A parte autora é cliente da ré no plano de internet contratado sob o nº 55.000.123. Entre ${F(esc(c.periodo))}, passou a ser cobrada pelo serviço ${F(esc(c.servico))}, no valor mensal de ${F(brl(c.valor))}, que jamais contratou.</p>
+       <p>As ${F(c.cobrancas)} faturas foram pagas, totalizando ${F(brl(total()))} cobrados indevidamente. A autora procurou a ré pelos canais de atendimento (protocolos ${F(esc(c.protocolos))}), sem solução: a cobrança persiste.</p>`
+    : `<p>A parte autora era titular do cartão de crédito final 4417 emitido pela ré, cujo cancelamento foi confirmado pela própria instituição em ${F("08/10/2025")}. Ainda assim, a ré lançou ${F(c.cobrancas)} parcelas de ${F(esc(c.servico))}, de ${F(brl(c.valor))} cada, entre ${F(esc(c.periodo))}.</p>
+       <p>Por se tratar de cobrança de cartão já cancelado, os valores não foram pagos. Em resposta, a ré incluiu o nome do autor em cadastro de proteção ao crédito, em ${F("05/02/2026")}, pelo valor de ${F(brl(c.negValor))}. Não há qualquer outra anotação em nome do autor.</p>`;
+
+  const direito = [
+    `<p>A relação entre as partes é de consumo (arts. 2º e 3º do CDC), sendo cabível a inversão do ônus da prova em favor do consumidor, diante de sua hipossuficiência técnica (art. 6º, VIII, do CDC).</p>`,
+    c.pago
+      ? `<p>A cobrança por serviço não contratado é indevida. Tendo havido pagamento, o consumidor tem direito à repetição do indébito em dobro (art. 42, parágrafo único, do CDC). Conforme o Superior Tribunal de Justiça, a restituição em dobro independe da natureza do elemento volitivo do fornecedor, sendo cabível quando a cobrança contraria a boa-fé objetiva (EAREsp 676.608/RS). O valor a restituir é de ${F(brl(dobro()))}.</p>`
+      : `<p>Cancelado o cartão por confirmação da própria ré, não subsiste causa para a cobrança da anuidade, impondo-se a declaração de inexistência do débito de ${F(brl(c.negValor))}.</p>`,
+    moral && c.negativado ? `<p>A inscrição indevida em cadastro de inadimplentes configura dano moral presumido, conforme pacífica jurisprudência do Superior Tribunal de Justiça. Inexistindo anotação anterior legítima, não incide a Súmula 385 do STJ.</p>` : "",
+    moral && !c.negativado ? `<p>A parte autora despendeu tempo útil considerável em sucessivas tentativas de solução administrativa, sem êxito, o que ultrapassa o mero aborrecimento e enseja reparação por dano moral.</p>` : "",
+    c.negativado ? `<p>Presentes a probabilidade do direito (confirmação escrita do cancelamento) e o perigo de dano (restrição ao crédito), requer-se tutela de urgência para exclusão imediata do nome do autor dos cadastros de proteção ao crédito (art. 300 do CPC).</p>` : ""
+  ].join("");
+
+  const pedidos = [
+    c.negativado ? `a concessão de tutela de urgência para determinar à ré que exclua o nome do autor dos cadastros de proteção ao crédito, em prazo a ser fixado, sob pena de multa diária;` : "",
+    `a citação da ré para, querendo, comparecer à audiência de conciliação e apresentar resposta;`,
+    `a inversão do ônus da prova (art. 6º, VIII, do CDC);`,
+    `a declaração de inexistência do débito referente a ${F(esc(c.servico))};`,
+    c.pago ? `a condenação da ré à restituição em dobro dos valores pagos, no total de ${F(brl(dobro()))}, com correção monetária e juros de mora;` : "",
+    moral ? `a condenação da ré ao pagamento de indenização por danos morais de ${F(brl(moralValor))};` : "",
+    `a produção de todas as provas admitidas em direito, especialmente a documental anexa.`
+  ].filter(Boolean);
+
+  return `<div class="paper" id="paper">
+    <p class="addr">Excelentíssimo(a) Senhor(a) Juiz(a) de Direito do ___ Juizado Especial Cível da Comarca de Salvador/BA</p>
+    <p>${F(esc(a.nome))}, ${esc(a.nac)}, ${esc(a.civil)}, ${esc(a.prof)}, inscrito(a) no CPF sob o nº ${F(esc(a.cpf))}, residente e domiciliado(a) em ${F(esc(a.end) + ", CEP " + esc(a.cep) + (semComprovante ? " [confirmar: falta comprovante]" : ""), semComprovante)}, vem, por seu(sua) advogado(a), propor</p>
+    <p class="title">${nomeAcao}</p>
+    <p>em face de ${F(esc(r.nome))}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${F(esc(r.cnpj))}, com sede em ${F(esc(r.end))}, pelos fatos e fundamentos a seguir.</p>
+    <h3>I · Dos fatos</h3>${fatos}
+    <h3>II · Do direito</h3>${direito}
+    <h3>III · Dos pedidos</h3><p>Diante do exposto, requer:</p>
+    <ol type="a">${pedidos.map(p => `<li>${p}</li>`).join("")}</ol>
+    <p>Dá-se à causa o valor de ${F(brl(vCausa))} (art. 292 do CPC).</p>
+    <p>Nestes termos, pede deferimento.</p>
+    <p class="sign">Salvador/BA, ${new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })}.<br><br>____________________________________<br>[Nome do(a) advogado(a)] · OAB/__ nº ______</p>
+  </div>`;
+}
+
+function renderDraft(P) {
+  const pend = cur.missing.length;
+  P.innerHTML = `<h2>Minuta da petição inicial</h2><p class="lead">Campos destacados vieram dos documentos. Os vermelhos ainda dependem de você. Ajuste as opções e a minuta se atualiza.</p>
+    <div class="review"><b>Revisão humana obrigatória.</b><span>O agente prepara; a advogada confere, decide os pedidos e assina.${pend ? ` Há ${pend} pendência antes do protocolo.` : ""}</span></div>
+    <div class="opts">
+      <label for="opt-moral"><input type="checkbox" id="opt-moral" ${moral ? "checked" : ""} onchange="moral=this.checked; renderDraft($('panel'))"> Incluir pedido de danos morais</label>
+      <label for="opt-valor">Valor <input type="number" id="opt-valor" min="0" step="500" value="${moralValor}" ${moral ? "" : "disabled"} onchange="moralValor=Math.max(0,+this.value||0); renderDraft($('panel'))"></label>
+      <span class="sp"></span>
+      <button class="btn" onclick="copyDraft()">Copiar texto da minuta</button>
+    </div>
+    ${draftHTML()}`;
+}
+
+async function copyDraft() {
+  const txt = $("paper").innerText;
+  try { await navigator.clipboard.writeText(txt); toast("Minuta copiada."); }
+  catch (e) { toast("Não foi possível copiar aqui. Selecione o texto e use Ctrl+C."); }
+}
+function toast(m) { const t = $("toast"); t.textContent = m; t.classList.remove("hidden"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.add("hidden"), 2600); }
+
+/* ===================== Início: abre já com o caso 1 processado ===================== */
+renderCases(); ran = true; step = 1; renderSteps(); render();
+</script>
+</body>
+</html>

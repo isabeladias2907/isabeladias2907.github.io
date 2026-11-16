@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Painel — Despacho</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap" />
+  <script src="demo-mock.js"></script>
+  <style>
+    :root{
+      --brand:#0f4c5c; --brand-dark:#0a3540; --brand-soft:#e7eff1; --brand-line:#c9d6da;
+      --ink:#16191d; --text:#2b3036; --muted:#5b636b; --faint:#8a929a;
+      --line:#e3e8ea; --bg:#f4f7f8; --card:#fff;
+      --ok:#2f7a52; --ok-bg:#ecf6f1; --warn:#9a6a12; --warn-bg:#fbf3e2; --bad:#a33a3a; --bad-bg:#fbefef;
+      --radius:10px;
+      --serif:'Source Serif 4',Georgia,serif;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{min-height:100vh; background:var(--bg); color:var(--text); font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif; font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased}
+    button,input,select,textarea{font:inherit}
+    .hidden{display:none !important}
+    a{color:var(--brand)}
+
+    /* Topo */
+    .top{background:var(--brand); color:#e9f1f3}
+    .top .in{max-width:1240px; margin:0 auto; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .id{display:flex; align-items:center; gap:12px}
+    .id .mono{width:36px; height:36px; border:1px solid rgba(255,255,255,.35); border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:600; color:#fff}
+    .id b{display:block; color:#fff; font-weight:600; font-size:14px; line-height:1.2}
+    .id small{display:block; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#a9c4cb}
+    .top-right{display:flex; align-items:center; gap:12px}
+    .top-right .who{font-size:12px; color:#bcd3d8}
+    .btn-top{font-size:12px; font-weight:500; color:#fff; background:transparent; border:1px solid rgba(255,255,255,.35); border-radius:8px; padding:6px 12px; cursor:pointer; text-decoration:none}
+    .btn-top:hover{background:rgba(255,255,255,.1)}
+    .live{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:#bcd3d8}
+    .live i{width:7px; height:7px; border-radius:50%; background:#8a9ba0}
+    .live.on i{background:#6fd3a0; box-shadow:0 0 0 3px rgba(111,211,160,.2)}
+
+    .wrap{max-width:1240px; margin:0 auto; padding:28px 28px 56px}
+    .head-row{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:20px}
+    .head-row h1{margin:4px 0 0; font-family:var(--serif); font-weight:600; font-size:30px; color:var(--ink); letter-spacing:-.01em}
+    .eyebrow{font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--brand)}
+    .filters{display:flex; gap:10px; flex-wrap:wrap}
+    .filters select,.filters input{background:#fff; border:1px solid var(--brand-line); border-radius:8px; padding:8px 12px; font-size:13px; color:var(--ink); min-width:180px}
+    .filters input:focus,.filters select:focus{outline:none; border-color:var(--brand)}
+
+    /* Indicadores */
+    .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px}
+    .stat{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; cursor:pointer; transition:.15s}
+    .stat:hover{border-color:var(--brand-line); box-shadow:0 6px 18px rgba(15,76,92,.07)}
+    .stat .k{font-size:12px; color:var(--muted)}
+    .stat .v{font-family:var(--serif); font-size:32px; font-weight:600; color:var(--ink); line-height:1.1; margin-top:4px}
+    .stat .v.alert{color:var(--bad)}
+
+    /* Abas */
+    .tabs{display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:18px; overflow-x:auto}
+    .tab{background:none; border:0; border-bottom:2px solid transparent; padding:10px 14px; font-size:13.5px; font-weight:500; color:var(--muted); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:8px}
+    .tab:hover{color:var(--ink)}
+    .tab.active{color:var(--brand); border-bottom-color:var(--brand); font-weight:600}
+    .count{font-size:11px; font-weight:600; background:var(--brand-soft); color:var(--brand); border-radius:999px; padding:1px 8px}
+    .tab.active .count{background:var(--brand); color:#fff}
+    .sub{display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap}
+    .chip{background:#fff; border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:12.5px; color:var(--muted); cursor:pointer}
+    .chip.on{background:var(--ink); border-color:var(--ink); color:#fff}
+
+    /* Itens */
+    .list{display:flex; flex-direction:column; gap:10px}
+    .item{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+    .item.unread{border-left:3px solid var(--brand)}
+    .item-head{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; padding:14px 18px; align-items:start}
+    .item-head.clickable{cursor:pointer}
+    .item-head.clickable:hover{background:#fafcfc}
+    .title{font-size:15px; font-weight:600; color:var(--ink); margin:0 0 4px}
+    .meta{display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; font-size:12px; color:var(--muted)}
+    .meta .dot{width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:0}
+    .pill{display:inline-block; font-size:11px; font-weight:600; border-radius:999px; padding:2px 9px; background:#f1f3f4; color:var(--muted)}
+    .pill.alta,.pill.urgente{background:var(--bad-bg); color:var(--bad)}
+    .pill.media,.pill.altaurg{background:var(--warn-bg); color:var(--warn)}
+    .pill.ok{background:var(--ok-bg); color:var(--ok)}
+    .pill.brand{background:var(--brand-soft); color:var(--brand)}
+    .late{color:var(--bad); font-weight:600}
+    .right{display:flex; align-items:center; gap:8px}
+    .right select{border:1px solid var(--brand-line); border-radius:8px; padding:6px 10px; font-size:12.5px; background:#fff; color:var(--ink)}
+    .btn{font-size:12.5px; font-weight:500; color:var(--brand); background:#fff; border:1px solid var(--brand-line); border-radius:8px; padding:6px 12px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-flex; align-items:center; gap:6px}
+    .btn:hover{border-color:var(--brand); background:var(--brand-soft)}
+    .btn.solid{background:var(--brand); color:#fff; border-color:var(--brand)}
+    .btn.solid:hover{background:var(--brand-dark)}
+    .btn svg{width:14px; height:14px}
+    .item-body{border-top:1px solid var(--line); padding:16px 18px 18px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 24px; background:#fcfdfd}
+    .field .lbl{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--brand); margin-bottom:3px}
+    .field .val{white-space:pre-wrap; word-break:break-word; color:var(--text); font-size:13.5px}
+    .field.full{grid-column:1/-1}
+    .files{display:flex; flex-wrap:wrap; gap:8px}
+    .msg-text{padding:0 18px 16px; white-space:pre-wrap; word-break:break-word; color:var(--text)}
+    .empty{background:var(--card); border:1px dashed var(--brand-line); border-radius:12px; padding:36px; text-align:center; color:var(--muted)}
+
+    /* Tabela de arquivos */
+    table{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+    th{text-align:left; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--brand); padding:10px 14px; background:#fafcfc; border-bottom:1px solid var(--line)}
+    td{padding:10px 14px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle}
+    tr:last-child td{border-bottom:0}
+    .ext{display:inline-block; min-width:38px; text-align:center; padding:2px 6px; border-radius:5px; background:var(--brand-soft); color:var(--brand); font-size:10px; font-weight:700; text-transform:uppercase; margin-right:8px}
+
+    /* Clientes */
+    .clients-grid{display:grid; grid-template-columns:minmax(0,1fr) 400px; gap:20px; align-items:start}
+    .client-card{display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+    .client-card .sw{display:flex; gap:3px}
+    .client-card .sw i{width:16px; height:16px; border-radius:4px; border:1px solid rgba(0,0,0,.06)}
+    .client-card .info{flex:1; min-width:0}
+    .client-card .info b{display:block; color:var(--ink)}
+    .client-card .info span{font-size:12px; color:var(--muted)}
+    .form-card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; position:sticky; top:20px}
+    .form-card h3{margin:0 0 14px; font-family:var(--serif); font-weight:600; font-size:20px; color:var(--ink)}
+    .form-card form{display:flex; flex-direction:column; gap:12px}
+    .form-card label{display:block; font-size:12px; font-weight:600; color:var(--ink); margin-bottom:4px}
+    .form-card input[type=text],.form-card input[type=url]{width:100%; border:1px solid var(--brand-line); border-radius:8px; padding:8px 11px; font-size:13px}
+    .form-card input:focus{outline:none; border-color:var(--brand)}
+    .colors{display:grid; grid-template-columns:repeat(5,1fr); gap:8px}
+    .colors label{font-size:10.5px; font-weight:500; color:var(--muted)}
+    .colors input[type=color]{width:100%; height:34px; border:1px solid var(--brand-line); border-radius:8px; padding:2px; background:#fff; cursor:pointer}
+    .check{display:flex; align-items:center; gap:8px; font-size:13px}
+    .preview{border:1px solid var(--line); border-radius:10px; overflow:hidden}
+    .preview .bar{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#fff; border-bottom:1px solid var(--line)}
+    .preview .bar img{height:22px}
+    .preview .hero{padding:14px 12px; font-weight:700}
+    .preview .cta{margin:0 12px 12px; padding:9px; border-radius:8px; color:#fff; text-align:center; font-weight:600; font-size:13px}
+    .hint{font-size:11.5px; color:var(--faint); margin-top:3px}
+
+    /* Login / estados */
+    .center{min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:24px}
+    .gate{max-width:400px; text-align:center}
+    .gate h2{font-family:var(--serif); font-weight:600; font-size:28px; color:var(--ink); margin:10px 0 8px}
+    .gate p{color:var(--muted); margin:0 0 24px}
+    .btn-google{display:inline-flex; align-items:center; gap:12px; font-size:15px; font-weight:500; color:var(--ink); background:#fff; border:1px solid var(--brand-line); border-radius:var(--radius); padding:12px 24px; cursor:pointer}
+    .btn-google:hover{border-color:var(--brand)}
+    .btn-google svg{width:20px; height:20px}
+
+    /* Ações e edição */
+    .actions{grid-column:1/-1; display:flex; gap:8px; justify-content:flex-end; padding-top:6px; border-top:1px dashed var(--line); margin-top:4px}
+    .btn.danger{color:var(--bad); border-color:#ecc4c4}
+    .btn.danger:hover{background:var(--bad-bg); border-color:var(--bad)}
+    .btn.icon{padding:6px 8px}
+    .edit{grid-column:1/-1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px 14px}
+    .edit .full{grid-column:1/-1}
+    .edit .half{grid-column:span 2}
+    .edit label{display:block; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--brand); margin-bottom:4px}
+    .edit input,.edit select,.edit textarea{width:100%; border:1px solid var(--brand-line); border-radius:8px; padding:8px 11px; font-size:13.5px; color:var(--ink); background:#fff}
+    .edit textarea{resize:vertical}
+    .edit input:focus,.edit select:focus,.edit textarea:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(15,76,92,.12)}
+    .att-edit{display:flex; flex-wrap:wrap; gap:8px}
+    .att-edit .btn.removed{text-decoration:line-through; opacity:.55}
+
+    /* Respostas */
+    .reply-box{margin:0 18px 16px; padding:12px 14px; border-left:3px solid var(--brand); background:var(--brand-soft); border-radius:0 8px 8px 0}
+    .reply-box .lbl{font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--brand); margin-bottom:4px}
+    .reply-box .val{white-space:pre-wrap; word-break:break-word; color:var(--ink); font-size:13.5px}
+    .composer{border-top:1px solid var(--line); padding:14px 18px 16px; background:#fcfdfd}
+    .composer textarea{width:100%; border:1px solid var(--brand-line); border-radius:8px; padding:10px 12px; font-size:13.5px; resize:vertical; color:var(--ink)}
+    .composer textarea:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(15,76,92,.12)}
+    .composer-actions{display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap}
+    .composer-actions .hint{flex:1; min-width:200px; font-size:12px; color:var(--faint); margin:0}
+
+    /* Conversas */
+    .conv{display:grid; grid-template-columns:320px minmax(0,1fr); gap:16px; align-items:start}
+    .threads{display:flex; flex-direction:column; gap:6px; max-height:640px; overflow-y:auto}
+    .thread{display:flex; flex-direction:column; gap:4px; text-align:left; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer}
+    .thread:hover{border-color:var(--brand-line)}
+    .thread.on{border-color:var(--brand); box-shadow:inset 3px 0 0 var(--brand)}
+    .t-top{display:flex; justify-content:space-between; gap:8px; align-items:baseline}
+    .t-top b{color:var(--ink); font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .t-top small{flex:none; font-size:11px; color:var(--faint)}
+    .t-meta{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted)}
+    .t-meta .count{margin-left:auto}
+    .t-last{font-size:12.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .chat-pane{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column}
+    .chat-head{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line)}
+    .chat-head b{color:var(--ink)}
+    .chat-log{height:440px; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; background:#fbfcfc}
+    .bubble{position:relative; max-width:76%; padding:10px 13px; border-radius:14px; font-size:13.5px; line-height:1.45; white-space:pre-wrap; word-break:break-word}
+    .bubble.them{align-self:flex-start; background:#fff; border:1px solid var(--line); color:var(--ink); border-bottom-left-radius:4px}
+    .bubble.me{align-self:flex-end; background:var(--brand); color:#fff; border-bottom-right-radius:4px}
+    .bubble .when{white-space:normal; display:flex; align-items:center; justify-content:flex-end; gap:6px; font-size:10.5px; margin-top:4px; opacity:.75}
+    .bub-del{border:0; background:transparent; color:inherit; cursor:pointer; font-size:14px; line-height:1; padding:0 2px; opacity:0}
+    .bubble:hover .bub-del{opacity:.8}
+    .day{align-self:center; font-size:11px; color:var(--faint); padding:2px 10px; border-radius:999px; background:#eef2f3}
+
+    /* Confirmação */
+    .modal-bg{position:fixed; inset:0; background:rgba(16,24,32,.45); display:flex; align-items:center; justify-content:center; padding:20px; z-index:20}
+    .modal{background:#fff; border-radius:14px; max-width:420px; width:100%; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.25)}
+    .modal h3{margin:0 0 8px; font-family:var(--serif); font-weight:600; font-size:21px; color:var(--ink)}
+    .modal p{margin:0 0 20px; color:var(--muted)}
+    .modal .row-btns{display:flex; justify-content:flex-end; gap:8px}
+    .btn.solid.danger-solid{background:var(--bad); border-color:var(--bad); color:#fff}
+    .btn.solid.danger-solid:hover{background:#862f2f}
+
+    .toast{position:fixed; right:20px; bottom:20px; background:var(--ink); color:#fff; padding:12px 16px; border-radius:10px; font-size:13px; box-shadow:0 10px 30px rgba(0,0,0,.2); transform:translateY(20px); opacity:0; transition:.25s; z-index:10; max-width:360px}
+    .toast.show{transform:none; opacity:1}
+
+    @media (max-width:960px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .clients-grid{grid-template-columns:1fr}
+      .form-card{position:static}
+      .item-body{grid-template-columns:1fr}
+      .conv{grid-template-columns:1fr}
+      .threads{max-height:260px}
+    }
+    @media (max-width:600px){
+      .wrap{padding:20px 16px 40px}
+      .top .in{padding:12px 16px}
+      .top-right .who{display:none}
+      .item-head{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="in">
+      <div class="id">
+        <div class="mono">ID</div>
+        <div><b>Isabela Dias</b><small>Painel · Despacho</small></div>
+      </div>
+      <div class="top-right">
+        <span id="live" class="live"><i></i>tempo real</span>
+        <span id="who" class="who"></span>
+        <button id="btn-notify" class="btn-top hidden" onclick="enableNotifications()">Ativar notificações</button>
+        <button id="btn-logout" class="btn-top hidden" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login / acesso negado -->
+  <div id="gate" class="center hidden">
+    <div class="gate">
+      <div class="eyebrow">Área restrita</div>
+      <h2 id="gate-title">Painel da administradora</h2>
+      <p id="gate-text">Entre com a sua conta para ver mensagens, tarefas, reuniões e arquivos de todos os clientes.</p>
+      <button class="btn-google" onclick="loginGoogle()">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
+        Entrar com Google
+      </button>
+    </div>
+  </div>
+
+  <div id="loading" class="center"><span style="color:var(--muted)">Carregando…</span></div>
+
+  <!-- Painel -->
+  <main id="app" class="wrap hidden">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow" id="today"></div>
+        <h1 id="greet">Painel</h1>
+      </div>
+      <div class="filters">
+        <select id="f-client" onchange="render()"><option value="">Todos os clientes</option></select>
+        <input id="f-search" type="search" placeholder="Buscar…" oninput="render()" />
+      </div>
+    </div>
+
+    <section class="stats">
+      <div class="stat" onclick="openTab('tasks','open')"><div class="k">Tarefas abertas</div><div class="v" id="s-open">0</div></div>
+      <div class="stat" onclick="openTab('tasks','late')"><div class="k">Tarefas atrasadas</div><div class="v" id="s-late">0</div></div>
+      <div class="stat" onclick="openTab('messages','unread')"><div class="k">Mensagens não lidas</div><div class="v" id="s-unread">0</div></div>
+      <div class="stat" onclick="openTab('meetings','next')"><div class="k">Próximas reuniões</div><div class="v" id="s-next">0</div></div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="tasks" onclick="openTab('tasks')">Tarefas <span class="count" id="c-tasks">0</span></button>
+      <button class="tab" data-tab="messages" onclick="openTab('messages')">Conversas <span class="count" id="c-messages">0</span></button>
+      <button class="tab" data-tab="meetings" onclick="openTab('meetings')">Reuniões <span class="count" id="c-meetings">0</span></button>
+      <button class="tab" data-tab="files" onclick="openTab('files')">Arquivos <span class="count" id="c-files">0</span></button>
+      <button class="tab" data-tab="clients" onclick="openTab('clients')">Clientes <span class="count" id="c-clients">0</span></button>
+    </nav>
+
+    <div id="sub" class="sub"></div>
+    <section id="content"></section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="modal" class="modal-bg hidden" onclick="if(event.target===this) closeModal(false)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h3 id="modal-title"></h3>
+      <p id="modal-text"></p>
+      <div class="row-btns">
+        <button class="btn" onclick="closeModal(false)">Cancelar</button>
+        <button class="btn solid danger-solid" id="modal-ok" onclick="closeModal(true)">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://yfazbdzuwyvnegwlcyta.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_RLbZii2r6MSSb0pr3HZSxA_ABN7wkYw";
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const BUCKET = "task-attachments";
+    const STATUSES = ["Pendente", "Em andamento", "Concluída"];
+
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    const todayISO = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    const fmtD = d => d ? String(d).slice(0, 10).split("-").reverse().join("/") : "";
+    const fmtDT = t => t ? new Date(t).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+    const fmtSize = b => !b ? "" : b < 1048576 ? (b / 1024).toFixed(0) + " KB" : (b / 1048576).toFixed(1) + " MB";
+    const extOf = n => (String(n).includes(".") ? n.split(".").pop() : "arq").toLowerCase().slice(0, 5);
+    const jid = v => esc(JSON.stringify(v));
+    const safeUrl = u => /^https?:\/\//i.test(u) ? u : null;
+
+    let state = { tab: "tasks", sub: { tasks: "open", messages: "all", meetings: "next" }, open: new Set(), editing: null, editTask: null, thread: null, drafts: {} };
+    let data = { clients: [], tasks: [], messages: [], meetings: [] };
+    let me = null;
+
+    function show(id) { ["gate", "loading", "app"].forEach(v => $(v).classList.toggle("hidden", v !== id)); }
+    function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 3500); }
+
+    // ---------- Acesso ----------
+    sb.auth.onAuthStateChange((ev, session) => setTimeout(() => boot(session), 0));
+
+    async function boot(session) {
+      if (!session?.user) { show("gate"); $("btn-logout").classList.add("hidden"); return; }
+      if (me?.id === session.user.id) return;
+      me = session.user;
+      $("who").textContent = me.email;
+      $("btn-logout").classList.remove("hidden");
+      const { data: isAdmin } = await sb.rpc("is_central_admin");
+      if (!isAdmin) {
+        $("gate-title").textContent = "Acesso não autorizado";
+        $("gate-text").innerHTML = `A conta <b>${esc(me.email)}</b> não é administradora. <a href="#">Ir para o portal do cliente</a>.`;
+        show("gate");
+        return;
+      }
+      const first = (me.user_metadata?.full_name || "").split(" ")[0];
+      $("greet").textContent = first ? `Olá, ${first}` : "Painel";
+      $("today").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+      if ("Notification" in window && Notification.permission === "default") $("btn-notify").classList.remove("hidden");
+      await loadAll();
+      show("app");
+      subscribe();
+    }
+
+    async function loginGoogle() {
+      await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: "select_account" } } });
+    }
+    async function logout() { await sb.auth.signOut(); location.reload(); }
+
+    // ---------- Dados ----------
+    async function loadAll() {
+      const [c, t, m, r] = await Promise.all([
+        sb.from("clients").select("*").order("name"),
+        sb.from("tasks").select("*").order("created_at", { ascending: false }).limit(1000),
+        sb.from("messages").select("*").order("created_at", { ascending: false }).limit(1000),
+        sb.from("meetings").select("*").order("meeting_date", { ascending: true }).order("start_time", { ascending: true }).limit(1000)
+      ]);
+      const err = [c, t, m, r].find(x => x.error);
+      if (err) toast("Erro ao carregar: " + err.error.message);
+      data = { clients: c.data || [], tasks: t.data || [], messages: m.data || [], meetings: r.data || [] };
+      const ig = await sb.from("client_integrations").select("*");
+      data.integrations = ig.error ? [] : (ig.data || []);
+
+      const sel = $("f-client"), cur = sel.value;
+      sel.innerHTML = `<option value="">Todos os clientes</option>` + data.clients.map(x => `<option value="${esc(x.domain)}">${esc(x.name)}</option>`).join("");
+      sel.value = cur;
+      const typing = document.activeElement?.id === "reply-text";
+      render();
+      if (typing && $("reply-text")) { const b = $("reply-text"); b.focus(); b.selectionStart = b.selectionEnd = b.value.length; }
+    }
+
+    let channel;
+    function subscribe() {
+      channel = sb.channel("painel")
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, p => notifyNew("Nova mensagem", p.new))
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "tasks" }, p => notifyNew("Nova tarefa", p.new))
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "meetings" }, p => notifyNew("Nova reunião", p.new))
+        .subscribe(st => $("live").classList.toggle("on", st === "SUBSCRIBED"));
+    }
+
+    let reloadTimer;
+    function notifyNew(kind, row) {
+      if (row.author_role === "admin") { clearTimeout(reloadTimer); reloadTimer = setTimeout(loadAll, 400); return; }
+      const who = row.sender_name || row.sender_email || "";
+      const cl = clientOf(row.client_domain)?.name || "";
+      const txt = `${kind === "Nova mensagem" ? "Nova mensagem" : kind} de ${who}${cl ? " · " + cl : ""}`;
+      toast(txt);
+      if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+        new Notification(kind, { body: `${who}${cl ? " · " + cl : ""}\n${row.title || row.topic || (row.content || "").slice(0, 120)}` });
+      }
+      clearTimeout(reloadTimer); reloadTimer = setTimeout(loadAll, 400);
+    }
+
+    async function enableNotifications() {
+      const p = await Notification.requestPermission();
+      $("btn-notify").classList.add("hidden");
+      toast(p === "granted" ? "Notificações ativadas." : "Notificações não autorizadas no navegador.");
+    }
+
+    // ---------- Utilidades de exibição ----------
+    const clientOf = d => data.clients.find(c => c.domain === d);
+    function clientTag(d) {
+      const c = clientOf(d);
+      if (!c) return d ? `<span>${esc(d)}</span>` : "";
+      return `<span><i class="dot" style="background:${esc(c.color_primary)}"></i>${esc(c.name)}</span>`;
+    }
+    const prioClass = p => ({ "Alta": "alta", "Média": "media", "Baixa": "" }[p] || "");
+    const urgClass = u => ({ "Urgente": "urgente", "Alta": "altaurg" }[u] || "");
+    const isOpen = t => (t.status || "Pendente") !== "Concluída";
+    const isLate = t => isOpen(t) && t.due_date && String(t.due_date).slice(0, 10) < todayISO();
+    const meetKey = r => `${String(r.meeting_date).slice(0, 10)} ${String(r.start_time).slice(0, 5)}`;
+    const isUpcoming = r => String(r.meeting_date).slice(0, 10) >= todayISO();
+
+    function filtered(arr) {
+      const c = $("f-client").value, q = norm($("f-search").value);
+      return arr.filter(x => (!c || x.client_domain === c) && (!q || norm(JSON.stringify(x)).includes(q)));
+    }
+
+    function allFiles() {
+      const out = [];
+      filtered(data.tasks).forEach(t => (t.attachments || []).forEach((a, i) => out.push({ ...a, idx: i, task: t })));
+      return out;
+    }
+
+    // ---------- Render ----------
+    function openTab(tab, sub) {
+      state.tab = tab;
+      if (sub) state.sub[tab] = sub;
+      document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+      render();
+    }
+
+    function render() {
+      const T = filtered(data.tasks), M = filtered(data.messages), R = filtered(data.meetings);
+      $("s-open").textContent = T.filter(isOpen).length;
+      const late = T.filter(isLate).length;
+      $("s-late").textContent = late; $("s-late").classList.toggle("alert", late > 0);
+      const unread = M.filter(m => !m.read && m.author_role !== "admin").length;
+      $("s-unread").textContent = unread;
+      $("s-next").textContent = R.filter(isUpcoming).length;
+      $("c-tasks").textContent = T.filter(isOpen).length;
+      $("c-messages").textContent = unread;
+      $("c-meetings").textContent = R.filter(isUpcoming).length;
+      $("c-files").textContent = allFiles().length;
+      $("c-clients").textContent = data.clients.length;
+      document.title = (unread + T.filter(isOpen).length ? `(${unread + T.filter(isOpen).length}) ` : "") + "Painel — Despacho";
+
+      const subs = {
+        tasks: [["open", "Abertas"], ["late", "Atrasadas"], ["done", "Concluídas"], ["all", "Todas"]],
+        messages: [["unread", "Não lidas"], ["all", "Todas"]],
+        meetings: [["next", "Próximas"], ["past", "Anteriores"]],
+      }[state.tab];
+      $("sub").innerHTML = subs ? subs.map(([k, l]) => `<button class="chip ${state.sub[state.tab] === k ? "on" : ""}" onclick="openTab('${state.tab}','${k}')">${l}</button>`).join("") : "";
+
+      ({ tasks: renderTasks, messages: renderMessages, meetings: renderMeetings, files: renderFiles, clients: renderClients })[state.tab](T, M, R);
+    }
+
+    function empty(msg) { $("content").innerHTML = `<div class="empty">${msg}</div>`; }
+
+    function renderTasks(T) {
+      const s = state.sub.tasks;
+      let list = T.filter(t => s === "all" ? true : s === "done" ? !isOpen(t) : s === "late" ? isLate(t) : isOpen(t));
+      if (s !== "done" && s !== "all") {
+        const pr = { "Alta": 0, "Média": 1, "Baixa": 2 };
+        list = list.sort((a, b) => (isLate(b) - isLate(a)) || ((a.due_date || "9999") > (b.due_date || "9999") ? 1 : (a.due_date || "9999") < (b.due_date || "9999") ? -1 : 0) || ((pr[a.priority] ?? 1) - (pr[b.priority] ?? 1)));
+      }
+      if (!list.length) return empty("Nenhuma tarefa por aqui.");
+      $("content").innerHTML = `<div class="list">${list.map(t => {
+        const open = state.open.has("t" + t.id);
+        const n = (t.attachments || []).length;
+        const links = String(t.reference_links || "").split("\n").map(l => l.trim()).filter(Boolean);
+        return `<article class="item">
+          <div class="item-head clickable" onclick="toggle('t${t.id}')">
+            <div>
+              <p class="title">${esc(t.title)}</p>
+              <div class="meta">
+                ${clientTag(t.client_domain)}
+                <span class="pill ${prioClass(t.priority)}">${esc(t.priority || "Média")}</span>
+                ${t.task_type ? `<span class="pill brand">${esc(t.task_type)}</span>` : ""}
+                ${t.due_date ? `<span class="${isLate(t) ? "late" : ""}">Prazo ${fmtD(t.due_date)}${isLate(t) ? " · atrasada" : ""}</span>` : ""}
+                <span>${esc(t.sender_name || t.sender_email)}</span>
+                <span>${fmtDT(t.created_at)}</span>
+                ${n ? `<span>📎 ${n}</span>` : ""}
+              </div>
+            </div>
+            <div class="right" onclick="event.stopPropagation()">
+              <select onchange="setStatus(${jid(t.id)}, this.value)">
+                ${STATUSES.map(st => `<option ${((t.status || "Pendente") === st) ? "selected" : ""}>${st}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          ${open && state.editTask === t.id ? `<div class="item-body">${taskEditForm(t)}</div>` : ""}
+          ${open && state.editTask !== t.id ? `<div class="item-body">
+            ${t.client_name ? field("Cliente / parte", esc(t.client_name)) : ""}
+            ${t.process_number ? field("Nº do processo", esc(t.process_number)) : ""}
+            ${field("Descrição", esc(t.description) || "<span style='color:var(--faint)'>Sem descrição</span>", true)}
+            ${t.expected_result ? field("Resultado esperado", esc(t.expected_result), true) : ""}
+            ${links.length ? field("Links de referência", links.map(l => safeUrl(l) ? `<a href="${esc(l)}" target="_blank" rel="noopener noreferrer">${esc(l)}</a>` : esc(l)).join("<br>"), true) : ""}
+            ${n ? field("Anexos", `<div class="files">${t.attachments.map((a, i) => `<button class="btn" onclick="download(${jid(t.id)}, ${i})"><span class="ext">${esc(extOf(a.name))}</span>${esc(a.name)} <span style="color:var(--faint)">${fmtSize(a.size)}</span></button>`).join("")}</div>`, true) : ""}
+            ${field("Enviado por", `${esc(t.sender_name || "")} &lt;${esc(t.sender_email)}&gt;`)}
+            ${t.completed_at ? field("Concluída em", fmtDT(t.completed_at)) : ""}
+            <div class="actions">
+              <button class="btn" onclick="startEdit(${jid(t.id)})">Editar tarefa</button>
+              <button class="btn danger" onclick="deleteTask(${jid(t.id)})">Excluir tarefa</button>
+            </div>
+          </div>` : ""}
+        </article>`;
+      }).join("")}</div>`;
+    }
+    const field = (l, v, full) => `<div class="field ${full ? "full" : ""}"><div class="lbl">${l}</div><div class="val">${v}</div></div>`;
+
+    function toggle(k) {
+      if (state.open.has(k)) { state.open.delete(k); if ("t" + state.editTask === k) state.editTask = null; }
+      else state.open.add(k);
+      render();
+    }
+
+    // ---------- Confirmação ----------
+    let modalResolve;
+    function confirmDialog(title, text, okLabel = "Excluir") {
+      $("modal-title").textContent = title;
+      $("modal-text").textContent = text;
+      $("modal-ok").textContent = okLabel;
+      $("modal").classList.remove("hidden");
+      $("modal-ok").focus();
+      return new Promise(r => modalResolve = r);
+    }
+    function closeModal(ok) { $("modal").classList.add("hidden"); modalResolve?.(ok); modalResolve = null; }
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("modal").classList.contains("hidden")) closeModal(false); });
+
+    // ---------- Editar / excluir tarefas ----------
+    const TYPES = ["Petição / peça processual", "Contrato / minuta", "Parecer / pesquisa jurídica", "Revisão de documento", "Automação / sistema", "Skill do Claude / IA", "Atendimento / cliente", "Outro"];
+    const opts = (list, cur) => list.map(o => `<option ${o === cur ? "selected" : ""}>${esc(o)}</option>`).join("");
+    let removedAtt = new Set();
+
+    function startEdit(id) { state.editTask = id; removedAtt = new Set(); state.open.add("t" + id); render(); }
+    function cancelEdit() { state.editTask = null; removedAtt = new Set(); render(); }
+
+    function taskEditForm(t) {
+      const types = TYPES.includes(t.task_type) || !t.task_type ? TYPES : [t.task_type, ...TYPES];
+      return `<form class="edit" onsubmit="saveTask(event, ${jid(t.id)})">
+        <div class="full"><label>Título</label><input id="e-title" required maxlength="160" value="${esc(t.title)}"></div>
+        <div class="half"><label>Tipo</label><select id="e-type">${t.task_type ? "" : "<option value=''>—</option>"}${opts(types, t.task_type)}</select></div>
+        <div><label>Prioridade</label><select id="e-priority">${opts(["Baixa", "Média", "Alta"], t.priority || "Média")}</select></div>
+        <div><label>Prazo</label><input id="e-due" type="date" value="${esc(t.due_date ? String(t.due_date).slice(0, 10) : "")}"></div>
+        <div class="half"><label>Cliente / parte</label><input id="e-client" maxlength="160" value="${esc(t.client_name || "")}"></div>
+        <div><label>Nº do processo</label><input id="e-process" maxlength="25" value="${esc(t.process_number || "")}"></div>
+        <div><label>Status</label><select id="e-status">${opts(STATUSES, t.status || "Pendente")}</select></div>
+        <div class="full"><label>Descrição</label><textarea id="e-desc" rows="5">${esc(t.description || "")}</textarea></div>
+        <div class="full"><label>Resultado esperado</label><textarea id="e-result" rows="2">${esc(t.expected_result || "")}</textarea></div>
+        <div class="full"><label>Links de referência (um por linha)</label><textarea id="e-links" rows="2">${esc(t.reference_links || "")}</textarea></div>
+        ${(t.attachments || []).length ? `<div class="full"><label>Anexos — clique para marcar/desmarcar remoção</label>
+          <div class="att-edit">${t.attachments.map((a, i) => `<button type="button" class="btn ${removedAtt.has(i) ? "removed" : ""}" onclick="toggleRemoveAtt(${i})"><span class="ext">${esc(extOf(a.name))}</span>${esc(a.name)} ${removedAtt.has(i) ? "· será removido" : "✕"}</button>`).join("")}</div></div>` : ""}
+        <div class="actions">
+          <button type="button" class="btn" onclick="cancelEdit()">Cancelar</button>
+          <button type="submit" class="btn solid">Salvar alterações</button>
+        </div>
+      </form>`;
+    }
+
+    function toggleRemoveAtt(i) {
+      // preserva o que já foi digitado antes de redesenhar
+      const keep = {}; document.querySelectorAll(".edit [id^='e-']").forEach(el => keep[el.id] = el.value);
+      removedAtt.has(i) ? removedAtt.delete(i) : removedAtt.add(i);
+      render();
+      Object.entries(keep).forEach(([id, v]) => { if ($(id)) $(id).value = v; });
+    }
+
+    async function saveTask(e, id) {
+      e.preventDefault();
+      const t = data.tasks.find(x => x.id === id);
+      const v = k => $("e-" + k).value.trim();
+      const status = $("e-status").value;
+      const toRemove = (t.attachments || []).filter((_, i) => removedAtt.has(i));
+      const patch = {
+        title: v("title"),
+        task_type: v("type") || null,
+        priority: $("e-priority").value,
+        due_date: v("due") || null,
+        client_name: v("client") || null,
+        process_number: v("process") || null,
+        status,
+        completed_at: status === "Concluída" ? (t.completed_at || new Date().toISOString()) : null,
+        description: v("desc"),
+        expected_result: v("result") || null,
+        reference_links: v("links").split(/\n+/).map(s => s.trim()).filter(Boolean).join("\n") || null,
+        attachments: (t.attachments || []).filter((_, i) => !removedAtt.has(i))
+      };
+      if (toRemove.length && !(await confirmDialog("Remover anexos?", `${toRemove.length} arquivo(s) serão apagados definitivamente do armazenamento.`, "Remover e salvar"))) return;
+      const { error } = await sb.from("tasks").update(patch).eq("id", id);
+      if (error) return toast("Erro ao salvar: " + error.message);
+      if (toRemove.length) {
+        const { error: se } = await sb.storage.from(BUCKET).remove(toRemove.map(a => a.path));
+        if (se) toast("Tarefa salva, mas houve erro ao apagar arquivos: " + se.message);
+      }
+      Object.assign(t, patch);
+      state.editTask = null; removedAtt = new Set();
+      toast("Tarefa atualizada.");
+      render();
+    }
+
+    async function deleteTask(id) {
+      const t = data.tasks.find(x => x.id === id);
+      const n = (t.attachments || []).length;
+      const ok = await confirmDialog("Excluir tarefa?", `"${t.title}" será excluída definitivamente${n ? `, junto com ${n} anexo(s)` : ""}. Não dá para desfazer.`);
+      if (!ok) return;
+      const { error } = await sb.from("tasks").delete().eq("id", id);
+      if (error) return toast("Erro ao excluir: " + error.message);
+      if (n) await sb.storage.from(BUCKET).remove(t.attachments.map(a => a.path));
+      data.tasks = data.tasks.filter(x => x.id !== id);
+      state.open.delete("t" + id);
+      toast("Tarefa excluída.");
+      render();
+    }
+
+    async function deleteMessage(id) {
+      const m = data.messages.find(x => x.id === id);
+      const ok = await confirmDialog("Excluir mensagem?", `A mensagem de ${m.sender_name || m.sender_email} será excluída definitivamente. Não dá para desfazer.`);
+      if (!ok) return;
+      const { error } = await sb.from("messages").delete().eq("id", id);
+      if (error) return toast("Erro ao excluir: " + error.message);
+      data.messages = data.messages.filter(x => x.id !== id);
+      toast("Mensagem excluída.");
+      render();
+    }
+
+    async function setStatus(id, status) {
+      const patch = { status, completed_at: status === "Concluída" ? new Date().toISOString() : null };
+      const { error } = await sb.from("tasks").update(patch).eq("id", id);
+      if (error) return toast("Erro: " + error.message);
+      Object.assign(data.tasks.find(t => t.id === id), patch);
+      toast(`Tarefa marcada como "${status}".`);
+      render();
+    }
+
+    async function download(taskId, i) {
+      const a = data.tasks.find(t => t.id === taskId)?.attachments?.[i];
+      if (!a) return;
+      const { data: d, error } = await sb.storage.from(BUCKET).createSignedUrl(a.path, 600, { download: a.name });
+      if (error) return toast("Erro ao abrir arquivo: " + error.message);
+      window.open(d.signedUrl, "_blank", "noopener");
+    }
+
+    // ---------- Conversas ----------
+    const threadOf = m => String(m.thread_email || m.sender_email || "").toLowerCase();
+    const hhmm = t => new Date(t).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    const dayLabel = t => {
+      const d = new Date(t), today = new Date(), y = new Date(Date.now() - 864e5);
+      const same = (a, b) => a.toDateString() === b.toDateString();
+      return same(d, today) ? "Hoje" : same(d, y) ? "Ontem" : d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long" });
+    };
+
+    function buildThreads(M) {
+      const map = new Map();
+      M.forEach(m => {
+        const k = threadOf(m);
+        if (!map.has(k)) map.set(k, { email: k, msgs: [], unread: 0, name: "", domain: m.client_domain });
+        const t = map.get(k);
+        t.msgs.push(m);
+        if (m.author_role !== "admin") { t.name = t.name || m.sender_name || ""; if (!m.read) t.unread++; }
+      });
+      const list = [...map.values()];
+      list.forEach(t => {
+        t.msgs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        t.last = t.msgs[t.msgs.length - 1];
+        t.urgent = t.msgs.some(m => m.author_role !== "admin" && !m.read && m.urgency === "Urgente");
+      });
+      return list.sort((a, b) => new Date(b.last.created_at) - new Date(a.last.created_at));
+    }
+
+    function renderMessages(_, M) {
+      let threads = buildThreads(M);
+      if (state.sub.messages === "unread") threads = threads.filter(t => t.unread);
+      if (!threads.length) return empty(state.sub.messages === "unread" ? "Tudo lido por aqui." : "Nenhuma conversa ainda.");
+      if (!threads.some(t => t.email === state.thread)) state.thread = threads[0].email;
+      const t = threads.find(x => x.email === state.thread);
+
+      let lastDay = "";
+      const bubbles = t.msgs.map(m => {
+        const d = dayLabel(m.created_at);
+        const sep = d !== lastDay ? `<span class="day">${esc(d)}</span>` : "";
+        lastDay = d;
+        const mine = m.author_role === "admin";
+        const urg = !mine && m.urgency && m.urgency !== "Normal" ? `<span class="pill ${urgClass(m.urgency)}">${esc(m.urgency)}</span>` : "";
+        return `${sep}<div class="bubble ${mine ? "me" : "them"}">${esc(m.content)}<span class="when">${hhmm(m.created_at)} ${urg}<button class="bub-del" title="Excluir esta mensagem" aria-label="Excluir esta mensagem" onclick="deleteMessage(${jid(m.id)})">×</button></span></div>`;
+      }).join("");
+
+      $("content").innerHTML = `<div class="conv">
+        <div class="threads">${threads.map(x => `
+          <button class="thread ${x.email === state.thread ? "on" : ""}" onclick="openThread(${jid(x.email)})">
+            <span class="t-top"><b>${esc(x.name || x.email)}</b><small>${fmtDT(x.last.created_at)}</small></span>
+            <span class="t-meta">${clientTag(x.domain)}${x.urgent ? `<span class="pill urgente">Urgente</span>` : ""}${x.unread ? `<span class="count">${x.unread}</span>` : ""}</span>
+            <span class="t-last">${x.last.author_role === "admin" ? "Você: " : ""}${esc(String(x.last.content || "").slice(0, 90))}</span>
+          </button>`).join("")}
+        </div>
+        <section class="chat-pane">
+          <header class="chat-head">
+            <div><b>${esc(t.name || t.email)}</b><div class="meta">${esc(t.email)} ${clientTag(t.domain)}</div></div>
+            <div class="right">
+              <button class="btn" onclick="emailThread()">Enviar por e-mail</button>
+              <button class="btn danger" onclick="deleteThread()">Excluir conversa</button>
+            </div>
+          </header>
+          <div class="chat-log" id="chat-log">${bubbles}</div>
+          <div class="composer">
+            <textarea id="reply-text" rows="3" maxlength="5000" placeholder="Responder ${esc(t.name || t.email)}…  (Ctrl + Enter envia)"
+              oninput="state.drafts[state.thread]=this.value"
+              onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAdmin()}">${esc(state.drafts[t.email] || "")}</textarea>
+            <div class="composer-actions">
+              <span class="hint">A pessoa vê sua resposta na hora, na aba Conversa do portal.</span>
+              <button class="btn" onclick="emailThread()">Enviar por e-mail</button>
+              <button class="btn solid" id="btn-send" onclick="sendAdmin()">Enviar</button>
+            </div>
+          </div>
+        </section>
+      </div>`;
+      const log = $("chat-log"); log.scrollTop = log.scrollHeight;
+      if (t.unread && !document.hidden) markThreadRead(t.email);
+    }
+
+    const hookOf = d => (data.integrations || []).find(i => i.domain === d)?.chat_webhook_url || null;
+
+    function openThread(email) { state.thread = email; render(); }
+
+    async function markThreadRead(email) {
+      const ids = data.messages.filter(m => threadOf(m) === email && m.author_role !== "admin" && !m.read).map(m => m.id);
+      if (!ids.length) return;
+      ids.forEach(id => { const m = data.messages.find(x => x.id === id); if (m) m.read = true; });
+      const { error } = await sb.from("messages").update({ read: true }).in("id", ids);
+      if (error) toast("Erro ao marcar como lida: " + error.message);
+      setTimeout(render, 0);
+    }
+
+    async function sendAdmin() {
+      const box = $("reply-text");
+      const content = (box?.value || "").trim();
+      if (!content) return toast("Escreva a mensagem antes de enviar.");
+      const t = buildThreads(data.messages).find(x => x.email === state.thread);
+      const btn = $("btn-send"); btn.disabled = true; btn.textContent = "Enviando…";
+      const { data: row, error } = await sb.from("messages").insert({
+        client_domain: t.domain,
+        sender_name: me.user_metadata?.full_name || "Dra. Isabela",
+        sender_email: me.email,
+        thread_email: t.email,
+        author_role: "admin",
+        urgency: "Normal",
+        content,
+        read: true
+      }).select().single();
+      btn.disabled = false; btn.textContent = "Enviar";
+      if (error) return toast("Erro ao enviar: " + error.message);
+      if (!data.messages.some(m => m.id === row.id)) data.messages.unshift(row);
+      delete state.drafts[t.email];
+      render();
+      $("reply-text")?.focus();
+    }
+
+    function emailThread() {
+      const t = buildThreads(data.messages).find(x => x.email === state.thread);
+      if (!t) return;
+      const draft = ($("reply-text")?.value || "").trim();
+      const recent = t.msgs.slice(-6).map(m => `${m.author_role === "admin" ? "Dra. Isabela" : (m.sender_name || m.sender_email)} (${fmtDT(m.created_at)}):\n${m.content}`).join("\n\n");
+      const body = `${draft ? draft + "\n\n" : ""}— Conversa recente no Despacho —\n\n${recent}`;
+      location.href = `mailto:${encodeURIComponent(t.email)}?subject=${encodeURIComponent("Despacho — " + (clientOf(t.domain)?.name || "conversa"))}&body=${encodeURIComponent(body.slice(0, 1800))}`;
+    }
+
+    async function deleteThread() {
+      const t = buildThreads(data.messages).find(x => x.email === state.thread);
+      if (!t) return;
+      const ok = await confirmDialog("Excluir conversa?", `Todas as ${t.msgs.length} mensagens com ${t.name || t.email} serão excluídas definitivamente. A pessoa também deixa de vê-las no portal.`);
+      if (!ok) return;
+      const { error } = await sb.from("messages").delete().in("id", t.msgs.map(m => m.id));
+      if (error) return toast("Erro ao excluir: " + error.message);
+      data.messages = data.messages.filter(m => threadOf(m) !== t.email);
+      state.thread = null;
+      toast("Conversa excluída.");
+      render();
+    }
+
+    async function setRead(id, read) {
+      const { error } = await sb.from("messages").update({ read }).eq("id", id);
+      if (error) return toast("Erro: " + error.message);
+      data.messages.find(m => m.id === id).read = read;
+      render();
+    }
+
+    function renderMeetings(_, __, R) {
+      const next = state.sub.meetings === "next";
+      let list = R.filter(r => next ? isUpcoming(r) : !isUpcoming(r));
+      list.sort((a, b) => next ? meetKey(a).localeCompare(meetKey(b)) : meetKey(b).localeCompare(meetKey(a)));
+      if (!list.length) return empty(next ? "Nenhuma reunião marcada." : "Nenhuma reunião anterior.");
+      const today = todayISO();
+      $("content").innerHTML = `<div class="list">${list.map(r => {
+        const d = String(r.meeting_date).slice(0, 10);
+        const link = safeUrl(r.meet_link);
+        return `<article class="item">
+          <div class="item-head">
+            <div>
+              <p class="title">${esc(r.topic)}</p>
+              <div class="meta">
+                ${clientTag(r.client_domain)}
+                <span class="pill ${d === today ? "ok" : "brand"}">${d === today ? "Hoje" : fmtD(d)} · ${esc(String(r.start_time).slice(0, 5))}</span>
+                <span>${esc(r.sender_name || "")} ${esc(r.sender_email || "")}</span>
+              </div>
+            </div>
+            <div class="right">${link ? `<a class="btn solid" href="${esc(link)}" target="_blank" rel="noopener">Entrar no Meet</a>` : ""}</div>
+          </div>
+        </article>`;
+      }).join("")}</div>`;
+    }
+
+    function renderFiles() {
+      const F = allFiles();
+      if (!F.length) return empty("Nenhum arquivo recebido.");
+      $("content").innerHTML = `<table>
+        <thead><tr><th>Arquivo</th><th>Tarefa</th><th>Cliente</th><th>Enviado por</th><th>Data</th><th></th></tr></thead>
+        <tbody>${F.map(f => {
+          const i = f.idx;
+          return `<tr>
+            <td><span class="ext">${esc(extOf(f.name))}</span>${esc(f.name)} <span style="color:var(--faint)">${fmtSize(f.size)}</span></td>
+            <td>${esc(f.task.title)}</td>
+            <td>${clientTag(f.task.client_domain)}</td>
+            <td>${esc(f.task.sender_name || f.task.sender_email)}</td>
+            <td>${fmtDT(f.task.created_at)}</td>
+            <td style="text-align:right"><button class="btn" onclick="download(${jid(f.task.id)}, ${i})">Baixar</button></td>
+          </tr>`;
+        }).join("")}</tbody></table>`;
+    }
+
+    // ---------- Clientes ----------
+    const COLOR_FIELDS = [["color_primary", "Principal"], ["color_primary_dark", "Escura"], ["color_soft", "Fundo"], ["color_line", "Bordas"], ["color_ink", "Texto"]];
+    const DEFAULTS = { domain: "", name: "", logo_url: "", contact_email: "", color_primary: "#0f4c5c", color_primary_dark: "#0a3540", color_soft: "#e7eff1", color_line: "#c9d6da", color_ink: "#16191d", font_family: "", font_css_url: "", active: true };
+
+    function renderClients() {
+      const c = state.editing || DEFAULTS;
+      const isNew = !state.editing;
+      $("content").innerHTML = `<div class="clients-grid">
+        <div class="list">${data.clients.length ? data.clients.map(x => `
+          <div class="client-card">
+            <div class="sw">${COLOR_FIELDS.map(([k]) => `<i style="background:${esc(x[k])}"></i>`).join("")}</div>
+            <div class="info"><b>${esc(x.name)}</b><span>@${esc(x.domain)} · ${x.active ? "ativo" : "inativo"}${hookOf(x.domain) ? " · Google Chat conectado" : ""}</span></div>
+            <button class="btn" onclick="editClient('${esc(x.domain)}')">Editar</button>
+          </div>`).join("") : `<div class="empty">Nenhum cliente cadastrado.</div>`}
+        </div>
+        <div class="form-card">
+          <h3>${isNew ? "Novo cliente" : "Editar " + esc(c.name)}</h3>
+          <form onsubmit="saveClient(event)" oninput="updatePreview()">
+            <div><label>Domínio do e-mail</label><input type="text" id="cl-domain" required placeholder="escritorio.com.br" value="${esc(c.domain)}" ${isNew ? "" : "readonly"} pattern="[a-z0-9.\\-]+\\.[a-z]{2,}" />
+              <div class="hint">Todos com e-mail @este-domínio entram no portal deste cliente.</div></div>
+            <div><label>Nome exibido</label><input type="text" id="cl-name" required value="${esc(c.name)}" placeholder="Silva & Souza Advogados" /></div>
+            <div><label>Logo (URL)</label><input type="text" id="cl-logo" value="${esc(c.logo_url || "")}" placeholder="/clientes/logo.png ou https://…" />
+              <div class="hint">Coloque o arquivo na pasta <b>clientes/</b> do site e use /clientes/nome.png.</div></div>
+            <div><label>Cores</label><div class="colors">${COLOR_FIELDS.map(([k, l]) => `<div><input type="color" id="cl-${k}" value="${esc(c[k])}" /><label>${l}</label></div>`).join("")}</div></div>
+            <div><label>Fonte <span style="font-weight:400;color:var(--faint)">(opcional)</span></label><input type="text" id="cl-font" value="${esc(c.font_family || "")}" placeholder="'Satoshi'" /></div>
+            <div><label>CSS da fonte <span style="font-weight:400;color:var(--faint)">(opcional)</span></label><input type="url" id="cl-fontcss" value="${esc(c.font_css_url || "")}" placeholder="https://fonts.googleapis.com/css2?family=…" /></div>
+            <div><label>E-mail de contato no portal <span style="font-weight:400;color:var(--faint)">(opcional)</span></label>
+              <input type="email" id="cl-contact" value="${esc(c.contact_email || "")}" placeholder="voce@exemplo.com" />
+              <div class="hint">Aparece no portal do cliente no quadro “Prefere e-mail?”.</div></div>
+            <div><label>Webhook do Google Chat <span style="font-weight:400;color:var(--faint)">(opcional)</span></label>
+              <input type="url" id="cl-webhook" value="${esc(isNew ? "" : (hookOf(c.domain) || ""))}" placeholder="https://chat.googleapis.com/v1/spaces/…" />
+              <div class="hint">No espaço do cliente no Google Chat: <b>Apps e integrações → Webhooks → Adicionar</b>, e cole o link aqui. Novidades e respostas passam a cair nesse espaço.</div>
+              ${!isNew && hookOf(c.domain) ? `<button type="button" class="btn" style="margin-top:6px" onclick="testChat('${esc(c.domain)}')">Enviar teste ao Google Chat</button>` : ""}
+            </div>
+            <label class="check"><input type="checkbox" id="cl-active" ${c.active ? "checked" : ""} /> Cliente ativo (pode entrar e enviar)</label>
+            <div class="preview" id="cl-preview"></div>
+            <div style="display:flex; gap:8px">
+              <button class="btn solid" type="submit" style="flex:1; justify-content:center; padding:10px">${isNew ? "Cadastrar cliente" : "Salvar alterações"}</button>
+              ${isNew ? "" : `<button class="btn" type="button" onclick="editClient(null)">Cancelar</button>`}
+            </div>
+          </form>
+        </div>
+      </div>`;
+      updatePreview();
+    }
+
+    function editClient(domain) { state.editing = domain ? { ...clientOf(domain) } : null; render(); }
+
+    function updatePreview() {
+      const v = k => $("cl-" + k)?.value;
+      const logo = v("logo");
+      $("cl-preview").innerHTML = `
+        <div class="bar">${logo && /^(https:\/\/|\/|clientes\/)/.test(logo) ? `<img src="${esc(logo)}" alt="">` : `<b style="color:${esc(v("color_ink"))}">${esc(v("name") || "Nome do cliente")}</b>`}<span style="font-size:11px;color:#8a929a">Despacho</span></div>
+        <div class="hero" style="background:${esc(v("color_soft"))}; color:${esc(v("color_ink"))}">Olá, equipe!</div>
+        <div class="cta" style="background:${esc(v("color_primary"))}">Enviar mensagem</div>`;
+    }
+
+    async function testChat(domain) {
+      const { data: res, error } = await sb.functions.invoke("notify-chat", { body: { action: "test", domain } });
+      let msg = res?.error || error?.message;
+      try { msg = (await error?.context?.json())?.error || msg; } catch {}
+      toast(res?.ok ? "Teste enviado — confira o espaço no Google Chat." : "Falhou: " + msg);
+    }
+
+    async function saveClient(e) {
+      e.preventDefault();
+      const v = k => $("cl-" + k).value.trim();
+      const row = {
+        domain: v("domain").toLowerCase().replace(/^@/, ""),
+        name: v("name"),
+        logo_url: v("logo") || null,
+        font_family: v("font") || null,
+        font_css_url: v("fontcss") || null,
+        contact_email: v("contact") || null,
+        active: $("cl-active").checked
+      };
+      COLOR_FIELDS.forEach(([k]) => row[k] = $("cl-" + k).value.toLowerCase());
+      const hook = $("cl-webhook").value.trim();
+      if (hook && !/^https:\/\/chat\.googleapis\.com\//.test(hook)) return toast("O webhook precisa começar com https://chat.googleapis.com/");
+      const { error } = await sb.from("clients").upsert(row, { onConflict: "domain" });
+      if (error) return toast("Erro ao salvar: " + error.message);
+      if (hook || hookOf(row.domain)) {
+        const { error: ie } = await sb.from("client_integrations")
+          .upsert({ domain: row.domain, chat_webhook_url: hook || null, updated_at: new Date().toISOString() }, { onConflict: "domain" });
+        if (ie) return toast("Cliente salvo, mas o webhook não: " + ie.message);
+      }
+      toast(state.editing ? "Cliente atualizado." : "Cliente cadastrado.");
+      state.editing = null;
+      await loadAll();
+    }
+  </script>
+</body>
+</html>

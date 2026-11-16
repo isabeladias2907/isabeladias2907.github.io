@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Despacho — demonstração</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap" />
+  <script>window.__DEMO_SHELL = true;</script>
+  <script src="demo-mock.js"></script>
+  <style>
+    :root{ --brand:#0f4c5c; --brand-dark:#0a3540; --soft:#e7eff1; --ink:#16191d; --muted:#5b636b; --line:#e3e8ea; --bg:#f4f7f8 }
+    *{box-sizing:border-box}
+    html,body{margin:0; height:100%}
+    body{display:flex; flex-direction:column; background:var(--bg); color:var(--ink); font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif; font-size:14px; -webkit-font-smoothing:antialiased}
+    button{font:inherit}
+
+    header{background:var(--brand); color:#e9f1f3}
+    .bar{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 24px; flex-wrap:wrap}
+    .id{display:flex; align-items:center; gap:12px}
+    .mono{width:36px; height:36px; border:1px solid rgba(255,255,255,.35); border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'Source Serif 4',Georgia,serif; font-weight:600; color:#fff}
+    .id b{display:block; color:#fff; font-family:'Source Serif 4',Georgia,serif; font-weight:600; font-size:18px; line-height:1.1}
+    .id small{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#a9c4cb}
+    .seg{display:flex; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:10px; padding:3px}
+    .seg button{border:0; background:transparent; color:#cfe0e4; padding:7px 14px; border-radius:7px; cursor:pointer; font-size:13px; font-weight:500; white-space:nowrap}
+    .seg button:hover{color:#fff}
+    .seg button.on{background:#fff; color:var(--brand); font-weight:600}
+    .reset{border:1px solid rgba(255,255,255,.35); background:transparent; color:#fff; border-radius:8px; padding:7px 12px; cursor:pointer; font-size:12.5px}
+    .reset:hover{background:rgba(255,255,255,.1)}
+    .info{background:#fff; border-bottom:1px solid var(--line); padding:9px 24px; font-size:12.5px; color:var(--muted); display:flex; gap:8px 22px; flex-wrap:wrap; align-items:center}
+    .info b{color:var(--ink); font-weight:600}
+    .tag{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--brand); background:var(--soft); border-radius:999px; padding:3px 9px}
+
+    main{flex:1; display:flex; min-height:0}
+    .pane{flex:1; display:flex; flex-direction:column; min-width:0; border-right:1px solid var(--line)}
+    .pane:last-child{border-right:0}
+    .pane .label{display:none; padding:6px 14px; font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--brand); background:#fafcfc; border-bottom:1px solid var(--line)}
+    main.split .pane .label{display:block}
+    iframe{flex:1; width:100%; border:0; background:var(--bg)}
+    .hidden{display:none !important}
+
+    .toasts{position:fixed; right:18px; bottom:18px; display:flex; flex-direction:column; gap:8px; z-index:5; max-width:360px}
+    .toast{background:var(--ink); color:#fff; padding:11px 14px; border-radius:10px; font-size:13px; box-shadow:0 10px 30px rgba(0,0,0,.2); animation:in .25s ease}
+    .toast small{display:block; color:#a9b3b8; margin-top:2px; font-size:11.5px}
+    @keyframes in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+    @media (max-width:860px){
+      .bar{padding:10px 14px}
+      .info{padding:8px 14px}
+      .seg button[data-mode="lado-a-lado"]{display:none}
+      main.split .pane:last-child{display:none}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="id">
+        <div class="mono">ID</div>
+        <div><b>Despacho</b><small>Demonstração · por Isabela Dias</small></div>
+      </div>
+      <nav class="seg" aria-label="Escolher visão">
+        <button data-mode="portal" onclick="go('portal')">Portal do cliente</button>
+        <button data-mode="painel" onclick="go('painel')">Painel da administradora</button>
+        <button data-mode="lado-a-lado" onclick="go('lado-a-lado')">Lado a lado</button>
+      </nav>
+      <div style="display:flex;gap:8px;align-items:center"><a class="reset" href="../" style="text-decoration:none">← Portfólio</a>
+      <button class="reset" onclick="resetDemo()">Reiniciar demonstração</button></div>
+    </div>
+  </header>
+  <div class="info">
+    <span class="tag">Dados fictícios</span>
+    <span>Escritórios, pessoas e processos são inventados. <b>Nada é enviado de verdade</b>: sem login real, e-mail, arquivo ou Google.</span>
+    <span id="hint"></span>
+  </div>
+
+  <main id="main">
+    <section class="pane" id="pane-portal">
+      <div class="label">Portal do cliente · Rafael (Moraes Lima Advogados)</div>
+      <iframe id="f-portal" src="portal.html" title="Portal do cliente"></iframe>
+    </section>
+    <section class="pane" id="pane-painel">
+      <div class="label">Painel da administradora · Dra. Isabela</div>
+      <iframe id="f-painel" src="painel.html" title="Painel da administradora"></iframe>
+    </section>
+  </main>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script>
+    const S = window.__demo;
+    const HINTS = {
+      "portal": "Entre como <b>Rafael</b>, escreva na aba Conversa e veja a resposta chegar.",
+      "painel": "Entre como <b>Dra. Isabela</b> e veja tarefas, conversas, reuniões, arquivos e clientes.",
+      "lado-a-lado": "Escreva no portal (esquerda) e responda no painel (direita): tudo sincroniza na hora."
+    };
+    const MODES = ["portal", "painel", "lado-a-lado"];
+
+    function go(mode) {
+      if (!MODES.includes(mode)) mode = "portal";
+      S.mode = mode;
+      if (location.hash !== "#" + mode) history.replaceState(null, "", "#" + mode);
+      document.querySelectorAll(".seg button").forEach(b => b.classList.toggle("on", b.dataset.mode === mode));
+      const split = mode === "lado-a-lado";
+      document.getElementById("main").classList.toggle("split", split);
+      document.getElementById("pane-portal").classList.toggle("hidden", !split && mode !== "portal");
+      document.getElementById("pane-painel").classList.toggle("hidden", !split && mode !== "painel");
+      document.getElementById("hint").innerHTML = HINTS[mode];
+      // no "lado a lado", já entra nas duas telas para facilitar
+      if (split) {
+        ["portal", "painel"].forEach(r => {
+          if (!S.session[r]) {
+            const w = document.getElementById("f-" + r).contentWindow;
+            try { w.loginGoogle && w.loginGoogle(); } catch (e) {}
+          }
+        });
+      }
+    }
+
+    function toast(title, sub) {
+      const el = document.createElement("div");
+      el.className = "toast";
+      el.innerHTML = `${title}${sub ? `<small>${sub}</small>` : ""}`;
+      document.getElementById("toasts").appendChild(el);
+      setTimeout(() => el.remove(), 4200);
+    }
+
+    function resetDemo() {
+      S.reset();
+      document.getElementById("f-portal").src = "portal.html";
+      document.getElementById("f-painel").src = "painel.html";
+      toast("Demonstração reiniciada.");
+    }
+
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    // Efeitos que, no sistema real, acontecem fora da tela
+    S.listeners.push((table, row) => {
+      if (table === "messages" && row.author_role === "client") {
+        toast("💬 Nova mensagem no painel", "Aviso no Google Chat da administradora (simulado)");
+        if (S.mode !== "lado-a-lado") {
+          setTimeout(() => {
+            const reply = {
+              id: "auto" + Date.now(), client_domain: row.client_domain, thread_email: row.thread_email,
+              author_role: "admin", sender_name: "Isabela Dias", sender_email: "isabela@despacho.demo", urgency: "Normal", read: true,
+              content: "Recebido! Já estou vendo isso. (Resposta automática da demonstração; no uso real, a Dra. Isabela responde pelo painel.)",
+              created_at: new Date().toISOString()
+            };
+            S.db.messages.push(reply);
+            S.emit("messages", reply, "painel");
+          }, 2600);
+        }
+      }
+      if (table === "messages" && row.author_role === "admin") {
+        toast("📧 Aviso por e-mail enviado", `Para ${esc(row.thread_email)} (simulado)`);
+      }
+      if (table === "tasks") toast("✅ Nova tarefa no painel", "Aviso no Google Chat da administradora (simulado)");
+      if (table === "meetings") toast("📹 Reunião agendada", "Sala do Google Meet criada (simulado)");
+    });
+
+    ["portal", "painel"].forEach(r => document.getElementById("f-" + r).addEventListener("load", () => {
+      if (S.mode === "lado-a-lado" && !S.session[r]) {
+        try { document.getElementById("f-" + r).contentWindow.loginGoogle(); } catch (e) {}
+      }
+    }));
+    window.addEventListener("hashchange", () => go(location.hash.slice(1)));
+    go(location.hash.slice(1) || "portal");
+  </script>
+</body>
+</html>
