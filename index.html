@@ -1,376 +1,158 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Isabela Dias · Portfólio</title>
-<meta name="description" content="Advogada (OAB/BA 90.929). Contratos B2B e SaaS, LGPD, Legal Ops, automação e IA aplicadas ao jurídico. Projetos com demonstração.">
-<meta property="og:title" content="Isabela Dias · Portfólio">
-<meta property="og:description" content="Direito que vira sistema: projetos de Legal Ops, automação e IA com demonstração.">
-<meta property="og:image" content="https://isabeladias2907.github.io/assets/despacho.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f4c5c'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia,serif' font-size='28' font-weight='700' fill='%23fff'%3EID%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
-/* Layout: menu fixo · abertura em petróleo · projetos 2×2 com prévia · sobre/formação · contato */
-:root{
-  --bg:#f6f8f8; --paper:#ffffff; --ink:#15191c; --muted:#56626a; --line:#dbe3e6;
-  --petrol:#0f4c5c; --petrol-dark:#0a3540; --on-petrol:#ffffff; --petrol-soft:#e2edf0; --tag:#0f4c5c;
-  --build:#8a5a00; --build-bg:#fbf0d6; --live:#1d6b48; --live-bg:#dff1e7;
-  --display:'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --body:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --mono:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  color-scheme:light;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0d1214; --paper:#141b1e; --ink:#e5ecee; --muted:#9aa8ad; --line:#24323a;
-    --petrol:#0c3e4b; --petrol-dark:#0a3540; --on-petrol:#f2f8f9; --petrol-soft:#16292f; --tag:#86c6d4;
-    --build:#f0cf86; --build-bg:#3a2f14; --live:#7fd3a6; --live-bg:#163327; color-scheme:dark;
-  }
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth; scroll-padding-top:72px}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
-.inner{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-a{color:inherit}
-:focus-visible{outline:2px solid var(--tag);outline-offset:3px}
-h1,h2,h3{text-wrap:balance}
-
-/* Menu */
-.nav{position:sticky;top:0;z-index:20;background:var(--petrol);color:var(--on-petrol);border-bottom:1px solid rgba(255,255,255,.12)}
-.nav .inner{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:600;font-size:17px}
-.brand i{font-style:normal;width:30px;height:30px;border:1px solid rgba(255,255,255,.4);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
-.links{display:flex;align-items:center;gap:22px;font-size:14px}
-.links a{text-decoration:none;opacity:.85}
-.links a:hover{opacity:1;text-decoration:underline;text-underline-offset:4px}
-.seg{display:inline-flex;border:1px solid rgba(255,255,255,.4);border-radius:6px;overflow:hidden}
-.seg button{font:500 12.5px var(--body);padding:5px 11px;border:0;background:transparent;color:var(--on-petrol);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--on-petrol);color:var(--petrol)}
-
-/* Abertura */
-.hero{background:var(--petrol);color:var(--on-petrol)}
-.hero .inner{padding-block:44px 56px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:end}
-.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(36px,6vw,64px);line-height:1.04;letter-spacing:-.015em;margin:0 0 18px}
-.hero h1 em{font-style:italic}
-.hero .intro{margin:0 0 22px;max-width:52ch;opacity:.9;font-size:16px}
-.actions{display:flex;flex-wrap:wrap;gap:10px}
-.btn{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--body);text-decoration:none;border-radius:7px;padding:10px 16px;cursor:pointer;border:1px solid transparent}
-.btn.light{background:var(--on-petrol);color:var(--petrol)}
-.btn.ghost{border-color:rgba(255,255,255,.45);color:var(--on-petrol);background:transparent}
-.btn.ghost:hover{background:rgba(255,255,255,.08)}
-.who{display:flex;flex-direction:column;gap:8px;font-size:15px;min-width:0}
-.who strong{font-family:var(--display);font-weight:600;font-size:22px}
-.who .role{opacity:.9}
-.oab{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;opacity:.85}
-.areas{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.areas span{font-size:12.5px;border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:3px 11px}
-
-main .inner{display:flex;flex-direction:column;gap:64px;padding-block:56px 72px}
-.sechead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:24px}
-h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,3.4vw,34px);margin:0}
-.sechead p{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
-
-/* Projetos */
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
-.shot{display:block;aspect-ratio:16/10;background:var(--petrol-soft);border-bottom:1px solid var(--line);overflow:hidden;position:relative}
-.shot img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block;transition:transform .35s ease}
-a.shot:hover img{transform:scale(1.025)}
-.shot .ph{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:28px;background:linear-gradient(135deg,var(--petrol),var(--petrol-dark));color:var(--on-petrol)}
-.shot .ph b{font-family:var(--display);font-weight:600;font-size:26px}
-.shot .ph code{font-family:var(--mono);font-size:13px;opacity:.85;line-height:1.8}
-.card .body{padding:20px 22px;display:flex;flex-direction:column;gap:12px;flex:1}
-.card .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.num{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
-.pill{font-size:11.5px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:999px;white-space:nowrap}
-.pill.live{color:var(--live);background:var(--live-bg)}
-.pill.build{color:var(--build);background:var(--build-bg)}
-.pill.own{color:var(--tag);background:var(--petrol-soft)}
-.card h3{font-family:var(--display);font-weight:600;font-size:24px;line-height:1.15;margin:0}
-.card .sub{color:var(--muted);margin:-6px 0 0;font-size:14.5px}
-.card p{margin:0}
-.hl{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px;font-size:14.5px}
-.hl li::marker{color:var(--tag)}
-.stack{display:flex;flex-wrap:wrap;gap:6px}
-.stack span{font-family:var(--mono);font-size:12px;background:var(--petrol-soft);color:var(--ink);padding:2px 8px;border-radius:4px}
-.foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 22px;border-top:1px solid var(--line)}
-.foot small{color:var(--muted);font-size:12.5px;min-width:0;flex:1 1 200px}
-.cta{display:inline-flex;align-items:center;gap:8px;font:600 13.5px var(--body);text-decoration:none;color:var(--on-petrol);background:var(--petrol);border:1px solid var(--petrol);border-radius:7px;padding:8px 14px;white-space:nowrap}
-.cta:hover{background:var(--petrol-dark)}
-.cta.off{background:transparent;color:var(--muted);border-color:var(--line);cursor:default}
-.cta svg{width:14px;height:14px}
-
-/* Sobre */
-.about{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px}
-.about p{margin:0 0 14px;max-width:62ch}
-.k{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px}
-.skillgroups{display:flex;flex-direction:column;gap:18px}
-.skills{display:flex;flex-wrap:wrap;gap:6px}
-.skills span{font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 11px}
-.edu{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
-.edu li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)}
-.edu .y{font-family:var(--mono);font-size:12.5px;color:var(--muted);padding-top:2px}
-.edu b{display:block;font-weight:600}
-.edu span{color:var(--muted);font-size:14px}
-
-/* Contato */
-.contact{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center}
-.contact .item{display:flex;flex-direction:column;gap:2px;min-width:0}
-.contact .v{font-size:16px;overflow-wrap:anywhere}
-.copy{font:500 13px var(--body);padding:7px 14px;border-radius:6px;border:1px solid var(--petrol);background:var(--petrol);color:var(--on-petrol);cursor:pointer}
-.contact a{color:var(--tag);font-weight:500}
-.fine{font-size:13px;color:var(--muted);margin:16px 0 0;max-width:72ch}
-footer{color:var(--muted);font-size:12.5px;text-align:center;padding:0 16px 32px}
-
-@media (max-width:860px){
-  .hero .inner,.about{grid-template-columns:minmax(0,1fr);gap:28px}
-  .grid{grid-template-columns:minmax(0,1fr)}
-  .links a{display:none}
-}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{transition:none!important}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Planeja</title>
+  <meta name="description" content="Organizador de tarefas com quadro, calendário de entregas, automações e alertas de prazo.">
+  <meta name="theme-color" content="#1f3a5f">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<header class="nav">
-  <div class="inner">
-    <a class="brand" href="#top"><i>ID</i>Isabela Dias</a>
-    <nav class="links" aria-label="Seções">
-      <a href="#projetos" id="n-proj"></a>
-      <a href="#sobre" id="n-about"></a>
-      <a href="#contato" id="n-contact"></a>
-      <div class="seg" role="group" aria-label="Idioma / Language">
-        <button type="button" id="b-pt" aria-pressed="true">PT</button>
-        <button type="button" id="b-en" aria-pressed="false">EN</button>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <img src="icon.svg" alt="" width="30" height="30">
+        <span>Planeja</span>
       </div>
-    </nav>
-  </div>
-</header>
-
-<section class="hero" id="top">
-  <div class="inner">
-    <div>
-      <h1 id="h1"></h1>
-      <p class="intro" id="intro"></p>
-      <div class="actions">
-        <a class="btn light" href="#projetos" id="a-proj"></a>
-        <a class="btn ghost" href="https://www.linkedin.com/in/isabela-dias-67b969361" target="_blank" rel="noopener">LinkedIn</a>
-        <a class="btn ghost" href="#contato" id="a-contact"></a>
+      <nav class="nav" id="nav">
+        <button class="nav-item" data-view="board"><svg viewBox="0 0 24 24"><path d="M4 4h5v16H4zM10 4h5v10h-5zM16 4h4v7h-4z"/></svg><span>Quadro</span></button>
+        <button class="nav-item" data-view="list"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Prazos</span></button>
+        <button class="nav-item" data-view="calendar"><svg viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg><span>Calendário</span></button>
+        <button class="nav-item" data-view="automations"><svg viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></svg><span>Automações</span></button>
+        <button class="nav-item" data-view="settings"><svg viewBox="0 0 24 24"><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 12h2M18 12h2M12 4v2M12 18v2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4"/></svg><span>Ajustes</span></button>
+      </nav>
+      <div class="side-section">
+        <div class="side-title">Tags <button class="link-btn" id="manageTags">editar</button></div>
+        <div id="sideTags" class="side-tags"></div>
       </div>
-    </div>
-    <div class="who">
-      <strong>Isabela Alves Dias</strong>
-      <span class="role" id="role"></span>
-      <span class="oab">OAB/BA 90.929 · Salvador, Brasil</span>
-      <div class="areas" id="areas"></div>
-    </div>
-  </div>
-</section>
+      <div class="side-foot" id="sideStats"></div>
+    </aside>
 
-<main>
-  <div class="inner">
-    <section id="projetos" aria-labelledby="t-proj">
-      <div class="sechead"><h2 id="t-proj"></h2><p id="p-proj"></p></div>
-      <div class="grid" id="projects"></div>
-    </section>
-
-    <section id="sobre" aria-labelledby="t-about">
-      <div class="sechead"><h2 id="t-about"></h2></div>
-      <div class="about">
-        <div>
-          <div id="about"></div>
-          <span class="k" id="t-edu" style="margin-top:22px"></span>
-          <ul class="edu" id="edu"></ul>
+    <main class="main">
+      <header class="topbar">
+        <h1 id="viewTitle">Quadro</h1>
+        <div class="toolbar">
+          <label class="search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg>
+            <input id="search" type="search" placeholder="Buscar tarefas" autocomplete="off">
+          </label>
+          <select id="filterPriority" aria-label="Filtrar por prioridade">
+            <option value="">Todas as prioridades</option>
+            <option value="urgent">Urgente</option>
+            <option value="high">Alta</option>
+            <option value="medium">Média</option>
+            <option value="low">Baixa</option>
+          </select>
+          <label class="check-inline"><input type="checkbox" id="hideDone"> Ocultar concluídas</label>
+          <button class="icon-btn" id="bellBtn" aria-label="Alertas de prazo">
+            <svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></svg>
+            <span class="badge" id="bellCount" hidden>0</span>
+          </button>
+          <button class="btn primary" id="newTaskBtn"><span>+</span> Nova tarefa</button>
         </div>
-        <div class="skillgroups" id="skills"></div>
-      </div>
-    </section>
-
-    <section id="contato" aria-labelledby="t-contact">
-      <div class="sechead"><h2 id="t-contact"></h2></div>
-      <div class="contact">
-        <div class="item"><span class="k" style="margin:0">E-mail</span><span class="v" id="mail">isabela.dias29@hotmail.com</span></div>
-        <button type="button" class="copy" id="copy"></button>
-        <div class="item"><span class="k" style="margin:0">LinkedIn</span><a class="v" href="https://www.linkedin.com/in/isabela-dias-67b969361" target="_blank" rel="noopener">linkedin.com/in/isabela-dias-67b969361</a></div>
-      </div>
-      <p class="fine" id="fine"></p>
-    </section>
+      </header>
+      <div class="active-filter" id="activeFilter" hidden></div>
+      <section id="view" class="view"></section>
+    </main>
   </div>
-</main>
-<footer id="foot"></footer>
 
-<script>
-/* Para ligar o Simulador, cole o endereço do app no Streamlit em LINKS.simulador. */
-const LINKS = { despacho: 'despacho/', agente: 'agente/', simulador: 'https://simulador-contratos-isabela.streamlit.app/', planeja: 'planeja/' };
-const SHOTS = { despacho: 'assets/despacho.jpg', agente: 'assets/agente.jpg', simulador: 'assets/simulador.jpg', planeja: 'assets/planeja.jpg' };
+  <!-- Painel de alertas -->
+  <div class="drawer" id="alertDrawer" hidden>
+    <div class="drawer-head">
+      <h2>Alertas de prazo</h2>
+      <button class="icon-btn" data-close="alertDrawer" aria-label="Fechar">✕</button>
+    </div>
+    <div id="alertList" class="alert-list"></div>
+  </div>
 
-const T = {
- pt:{
-  nav:['Projetos','Sobre','Contato'],
-  h1:'Direito que vira <em>sistema</em>.',
-  intro:'Sou advogada e construo as ferramentas que dão escala ao trabalho jurídico: portais, agentes de IA, automações e simuladores. Abaixo, quatro projetos que você pode abrir e testar.',
-  aProj:'Ver projetos', aContact:'Contato',
-  role:'Advogada · Contratos B2B e SaaS · LGPD · Legal Ops, automação e IA',
-  areas:['Contratos B2B e SaaS','LGPD e Direito Digital','Legal Ops','Automação e IA'],
-  tProj:'Projetos', pProj:'Cada projeto tem uma versão para abrir no navegador. As demonstrações usam pessoas, escritórios e documentos fictícios.',
-  pills:{live:'Em uso',pub:'Publicado',build:'Em desenvolvimento',own:'Projeto pessoal'},
-  open:'Abrir demonstração', openApp:'Abrir o app', soon:'Link em breve',
-  projects:[
-   {id:'despacho', t:'Despacho', pill:'live', sub:'Portal de atendimento para escritórios de advocacia',
-    what:'Cada escritório entra com o e-mail corporativo e vê um portal com a própria marca: conversa em tempo real, tarefas com prazo e anexos e reuniões no Google Meet. Eu recebo tudo em um painel único.',
-    hl:['Vários clientes no mesmo sistema, separados pelo domínio do e-mail','Cada cliente só acessa o que é seu, com regras no banco de dados','Anexos privados e avisos por e-mail e Google Chat'],
-    stack:['JavaScript','Supabase','PostgreSQL','Google OAuth','Apps Script','Netlify'],
-    note:'Implantado em um escritório de advocacia. Demonstração com escritórios fictícios.', cta:'open'},
-   {id:'agente', t:'Agente de Documentos Jurídicos', pill:'build', sub:'Do documento solto à minuta da petição inicial',
-    what:'Lê os documentos do caso, extrai partes, valores e datas com a origem de cada dado, confere pendências e pontos jurídicos e gera a minuta para revisão da advogada.',
-    hl:['Checagens com base legal explícita (CDC, Lei 9.099/95, CPC, súmulas do STJ)','Identificadores mascarados: LGPD desde a concepção','Revisão humana obrigatória antes do protocolo'],
-    stack:['IA generativa','Extração estruturada','Regras de validação'],
-    note:'Caso e modelo de peça fictícios, escritos para a demonstração.', cta:'open'},
-   {id:'simulador', t:'Simulador de Contratos', pill:'pub', sub:'Comparação de minutas e contas do contrato',
-    what:'Compara a minuta de referência com a versão devolvida pelo cliente, mostrando o que foi alterado, incluído ou removido lado a lado, e faz as contas do contrato: multa, rescisão antecipada, mudança de plano, reajuste anual e datas-chave.',
-    hl:['Lê DOCX com controle de alterações e comentários','Cálculos de multa, mudança de plano e reajuste seguindo as regras do contrato','Arquivos lidos só em memória, sem armazenamento'],
-    stack:['Python','Streamlit'],
-    note:'Aplicação web publicada.', cta:'app'},
-   {id:'planeja', t:'Planeja', pill:'own', sub:'Organizador de tarefas com automações e alertas de prazo',
-    what:'Quadro com colunas, lista de prazos, calendário de entregas, tarefas recorrentes e regras automáticas, como "prazo vencido vira urgente". Integra com o Google Agenda.',
-    hl:['Automações com gatilho, filtro e ação','Funciona sem internet e instala como aplicativo','Exporta para Outlook e Apple (.ics)'],
-    stack:['JavaScript','HTML e CSS','Google Calendar API','PWA'],
-    note:'Na demonstração, Google Agenda e downloads ficam desligados.', cta:'open'}
-  ],
-  tAbout:'Sobre',
-  about:['Advogada formada pela Universidade Federal da Bahia (UFBA), atuo na interseção entre Direito e tecnologia. Tenho experiência em ambientes regulados: contratos B2B e SaaS com bancos, cooperativas de crédito e fintechs; contratos comerciais e com fornecedores em infraestrutura sob concessão pública; e direito público, com licitações e contratos administrativos.',
-         'Hoje sou consultora em automação e sistemas jurídicos em um escritório de advocacia.'],
-  tEdu:'Formação',
-  edu:[['2026–2027','Pós-graduação em Direito Digital e Proteção de Dados','Gran Faculdade · em curso'],
-       ['2026–2027','Pós-graduação em Arquitetura e Projetos em Cloud Computing','Gran Faculdade · em curso'],
-       ['2019–2025','Bacharelado em Direito','Universidade Federal da Bahia (UFBA)']],
-  skills:[['Jurídico',['Contratos B2B e SaaS','Negociação de contratos','LGPD','Compliance','Direito público','Licitações']],
-          ['Legal Ops e IA',['Legal Operations','Automação de processos','Agentes de IA','CRM']],
-          ['Tecnologia',['Python','JavaScript','Supabase','Streamlit','Google Apps Script','Cloudflare','Google Workspace','Slack','Asana','Jira','Trello','Miro']]],
-  tContact:'Contato', copy:'Copiar e-mail', copied:'E-mail copiado', sel:'Selecionado: use Ctrl+C',
-  fine:'Projetos feitos para empresas pertencem a elas. Por isso, as demonstrações usam dados fictícios, e este portfólio descreve meu papel sem telas, códigos ou dados internos.',
-  foot:'© Isabela Alves Dias'
- },
- en:{
-  nav:['Projects','About','Contact'],
-  h1:'Law that becomes <em>systems</em>.',
-  intro:'I am an attorney who builds the tools that scale legal work: client portals, AI agents, automations and simulators. Below are four projects you can open and try.',
-  aProj:'See projects', aContact:'Contact',
-  role:'Attorney · B2B & SaaS Contracts · LGPD · Legal Ops, automation and AI',
-  areas:['B2B & SaaS contracts','LGPD & digital law','Legal Ops','Automation & AI'],
-  tProj:'Projects', pProj:'Each project has a version you can open in the browser. The demos use fictional people, firms and documents. Demo interfaces are in Portuguese.',
-  pills:{live:'In use',pub:'Published',build:'In development',own:'Personal project'},
-  open:'Open demo', openApp:'Open the app', soon:'Link coming soon',
-  projects:[
-   {id:'despacho', t:'Despacho', pill:'live', sub:'Client portal for law firms',
-    what:'Each firm signs in with its corporate email and sees a portal in its own branding: real-time chat, tasks with deadlines and attachments, and Google Meet bookings. I receive everything in a single dashboard.',
-    hl:['Multiple clients in one system, separated by email domain','Each client only accesses its own data, enforced by database rules','Private attachments plus email and Google Chat notifications'],
-    stack:['JavaScript','Supabase','PostgreSQL','Google OAuth','Apps Script','Netlify'],
-    note:'Deployed at a law firm. Demo with fictional firms.', cta:'open'},
-   {id:'agente', t:'Legal Document Agent', pill:'build', sub:'From loose documents to a draft complaint',
-    what:'Reads the case documents, extracts parties, amounts and dates with the source of each item, checks for missing items and legal issues, and produces a draft for the attorney’s review.',
-    hl:['Checks with explicit legal grounds (Brazilian consumer, small-claims and civil procedure law)','Masked identifiers: privacy by design (LGPD)','Mandatory human review before filing'],
-    stack:['Generative AI','Structured extraction','Validation rules'],
-    note:'Fictional case and template written for the demo.', cta:'open'},
-   {id:'simulador', t:'Contract Simulator', pill:'pub', sub:'Draft comparison and contract math',
-    what:'Compares the reference draft with the version returned by the client, showing what was changed, added or removed side by side, and runs the contract math: termination fees, early termination, plan changes, annual price adjustment and key dates.',
-    hl:['Reads DOCX files with tracked changes and comments','Fee, plan-change and adjustment calculations based on the contract rules','Files processed in memory only, never stored'],
-    stack:['Python','Streamlit'],
-    note:'Published web app.', cta:'app'},
-   {id:'planeja', t:'Planeja', pill:'own', sub:'Task organizer with automations and deadline alerts',
-    what:'Kanban board, deadline list, delivery calendar, recurring tasks and automatic rules such as "overdue tasks become urgent". Syncs with Google Calendar.',
-    hl:['Automations with trigger, filter and action','Works offline and installs as an app','Exports to Outlook and Apple (.ics)'],
-    stack:['JavaScript','HTML & CSS','Google Calendar API','PWA'],
-    note:'In the demo, Google Calendar and downloads are turned off.', cta:'open'}
-  ],
-  tAbout:'About',
-  about:['Brazilian attorney with a law degree from the Federal University of Bahia (UFBA), working at the intersection of law and technology. I have experience in regulated environments: B2B and SaaS agreements with banks, credit unions and fintechs; commercial and supplier contracts in publicly concessioned infrastructure; and public law, including procurement and administrative contracts.',
-         'I currently work as a legal automation and systems consultant at a law firm.'],
-  tEdu:'Education',
-  edu:[['2026–2027','Postgraduate degree in Digital Law and Data Protection','Gran Faculdade · in progress'],
-       ['2026–2027','Postgraduate degree in Cloud Computing Architecture','Gran Faculdade · in progress'],
-       ['2019–2025','Bachelor of Laws (LL.B.)','Federal University of Bahia (UFBA)']],
-  skills:[['Legal',['B2B & SaaS Contracts','Contract Negotiation','LGPD','Compliance','Public Law','Public Procurement']],
-          ['Legal Ops & AI',['Legal Operations','Process Automation','AI Agents','CRM']],
-          ['Technology',['Python','JavaScript','Supabase','Streamlit','Google Apps Script','Cloudflare','Google Workspace','Slack','Asana','Jira','Trello','Miro']]],
-  tContact:'Contact', copy:'Copy email', copied:'Email copied', sel:'Selected: press Ctrl+C',
-  fine:'Projects built for companies belong to them. That is why the demos use fictional data, and this portfolio describes my role without screens, code or internal data.',
-  foot:'© Isabela Alves Dias'
- }
-};
-
-let lang = 'pt';
-try { const s = localStorage.getItem('pf-lang'); if (s === 'en' || s === 'pt') lang = s; } catch (e) {}
-const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>';
-const ext = url => /^https?:/.test(url) ? ' target="_blank" rel="noopener"' : '';
-
-function shot(p) {
-  const url = LINKS[p.id], img = SHOTS[p.id];
-  const inner = img
-    ? `<img src="${img}" alt="${esc(p.t)}" loading="lazy" width="960" height="600">`
-    : `<div class="ph"><b>${esc(p.t)}</b><code>${p.hl.map(esc).join('<br>')}</code></div>`;
-  return url ? `<a class="shot" href="${esc(url)}"${ext(url)} tabindex="-1" aria-hidden="true">${inner}</a>` : `<div class="shot">${inner}</div>`;
-}
-function cta(p, d) {
-  const url = LINKS[p.id];
-  if (!url) return `<span class="cta off">${esc(d.soon)}</span>`;
-  return `<a class="cta" href="${esc(url)}"${ext(url)}>${esc(p.cta === 'app' ? d.openApp : d.open)} ${ARROW}</a>`;
-}
-
-function render() {
-  const d = T[lang];
-  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
-  $('b-pt').setAttribute('aria-pressed', lang === 'pt');
-  $('b-en').setAttribute('aria-pressed', lang === 'en');
-  ['n-proj','n-about','n-contact'].forEach((id, i) => $(id).textContent = d.nav[i]);
-  $('h1').innerHTML = d.h1;
-  $('intro').textContent = d.intro;
-  $('a-proj').textContent = d.aProj;
-  $('a-contact').textContent = d.aContact;
-  $('role').textContent = d.role;
-  $('areas').innerHTML = d.areas.map(a => `<span>${esc(a)}</span>`).join('');
-  $('t-proj').textContent = d.tProj;
-  $('p-proj').textContent = d.pProj;
-  $('projects').innerHTML = d.projects.map((p, i) => `
-    <article class="card">
-      ${shot(p)}
-      <div class="body">
-        <div class="row"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="pill ${p.pill === 'pub' ? 'live' : p.pill}">${esc(d.pills[p.pill])}</span></div>
-        <h3>${esc(p.t)}</h3>
-        <p class="sub">${esc(p.sub)}</p>
-        <p>${esc(p.what)}</p>
-        <ul class="hl">${p.hl.map(h => `<li>${esc(h)}</li>`).join('')}</ul>
-        <div class="stack">${p.stack.map(s => `<span>${esc(s)}</span>`).join('')}</div>
+  <!-- Editor de tarefa -->
+  <dialog id="taskDialog" class="dialog">
+    <form id="taskForm" method="dialog">
+      <div class="dialog-head">
+        <input id="fTitle" class="title-input" placeholder="Nome da tarefa" required autocomplete="off">
+        <button type="button" class="icon-btn" id="closeTask" aria-label="Fechar">✕</button>
       </div>
-      <div class="foot"><small>${esc(p.note)}</small>${cta(p, d)}</div>
-    </article>`).join('');
-  $('t-about').textContent = d.tAbout;
-  $('about').innerHTML = d.about.map(p => `<p>${esc(p)}</p>`).join('');
-  $('t-edu').textContent = d.tEdu;
-  $('edu').innerHTML = d.edu.map(([y, c, w]) => `<li><span class="y">${esc(y)}</span><div><b>${esc(c)}</b><span>${esc(w)}</span></div></li>`).join('');
-  $('skills').innerHTML = d.skills.map(([g, list]) => `<div><span class="k">${esc(g)}</span><div class="skills">${list.map(s => `<span>${esc(s)}</span>`).join('')}</div></div>`).join('');
-  $('t-contact').textContent = d.tContact;
-  $('copy').textContent = d.copy;
-  $('fine').textContent = d.fine;
-  $('foot').textContent = d.foot;
-}
+      <div class="dialog-body">
+        <div class="grid-2">
+          <label class="field"><span>Coluna</span><select id="fColumn"></select></label>
+          <label class="field"><span>Prioridade</span>
+            <select id="fPriority">
+              <option value="urgent">Urgente</option>
+              <option value="high">Alta</option>
+              <option value="medium">Média</option>
+              <option value="low">Baixa</option>
+            </select>
+          </label>
+          <label class="field"><span>Início</span><input type="date" id="fStart"></label>
+          <div class="field"><span>Prazo de entrega</span>
+            <div class="row"><input type="date" id="fDue"><input type="time" id="fTime" aria-label="Hora"></div>
+          </div>
+        </div>
 
-function setLang(l) { lang = l; try { localStorage.setItem('pf-lang', l); } catch (e) {} render(); }
-$('b-pt').addEventListener('click', () => setLang('pt'));
-$('b-en').addEventListener('click', () => setLang('en'));
-$('copy').addEventListener('click', () => {
-  const btn = $('copy'), el = $('mail');
-  const ok = () => { btn.textContent = T[lang].copied; setTimeout(() => { btn.textContent = T[lang].copy; }, 1600); };
-  const fb = () => { const r = document.createRange(); r.selectNodeContents(el); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = T[lang].sel; };
-  try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(el.textContent).then(ok, fb); else fb(); } catch (e) { fb(); }
-});
-render();
-</script>
+        <div class="field"><span>Cor</span><div id="fColors" class="swatches"></div></div>
+
+        <div class="field"><span>Tags</span><div id="fTags" class="tag-picker"></div></div>
+
+        <div class="grid-2">
+          <div class="field"><span>Repetir</span>
+            <div class="row">
+              <select id="fRecur">
+                <option value="none">Não repete</option>
+                <option value="daily">Diariamente</option>
+                <option value="weekly">Semanalmente</option>
+                <option value="monthly">Mensalmente</option>
+                <option value="yearly">Anualmente</option>
+              </select>
+              <label class="mini">a cada <input type="number" id="fInterval" min="1" max="99" value="1"></label>
+            </div>
+          </div>
+          <label class="field"><span>Repetir até (opcional)</span><input type="date" id="fUntil"></label>
+        </div>
+
+        <div class="field"><span>Lembretes antes do prazo</span><div id="fReminders" class="chips"></div></div>
+
+        <label class="field"><span>Descrição</span><textarea id="fNotes" rows="3" placeholder="Detalhes, links, contexto"></textarea></label>
+
+        <div class="field"><span>Checklist <em id="checkProgress"></em></span>
+          <ul id="fChecklist" class="checklist"></ul>
+          <div class="row"><input id="fCheckNew" placeholder="Adicionar item e Enter" autocomplete="off"><button type="button" class="btn" id="fCheckAdd">Adicionar</button></div>
+        </div>
+        <p class="gcal-line" id="gcalLine"></p>
+      </div>
+      <div class="dialog-foot">
+        <button type="button" class="btn danger ghost" id="deleteTask">Excluir</button>
+        <div class="spacer"></div>
+        <button type="button" class="btn" id="syncTask" title="Enviar para o Google Agenda">Enviar ao Google Agenda</button>
+        <button type="submit" class="btn primary" id="saveTask">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Confirmação genérica -->
+  <dialog id="confirmDialog" class="dialog small">
+    <form method="dialog">
+      <div class="dialog-body"><p id="confirmText"></p></div>
+      <div class="dialog-foot">
+        <div class="spacer"></div>
+        <button value="no" class="btn">Cancelar</button>
+        <button value="yes" class="btn danger">Confirmar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Ajustes da demonstração publicada: sem Google Agenda e sem downloads (a página não permite).
+    connectGoogle = async function () { toast('Na demonstração, a conexão com o Google Agenda fica desligada. No app instalado, ela funciona.'); return false; };
+    download = function () { toast('Na demonstração, os downloads ficam desligados. No app instalado, o arquivo é baixado.'); };
+    setTimeout(function () { toast('Demonstração do Planeja: crie, arraste e conclua tarefas à vontade. Os dados ficam só neste navegador.'); }, 700);
+  </script>
 </body>
 </html>
